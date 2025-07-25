@@ -1,18 +1,25 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
+import NavBar from './components/NavBar.vue';
 </script>
 
 <template>
-  
-
-  <RouterView />
+    <NavBar />
+    <main>
+      <RouterView />
+    </main>
 </template>
+
 
 <style scoped>
 header {
   line-height: 1.5;
   max-height: 100vh;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
 }
 
 .logo {
