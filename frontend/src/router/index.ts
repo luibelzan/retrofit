@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Dashboard from '@/views/Dashboard.vue'
 import ETLProceso from '@/views/ETLProceso.vue'
 import RecepcionContador from '@/views/RecepcionContador.vue'
+import Recuperado from '@/views/Recuperado.vue'
 
 const routes = [
   {
@@ -18,6 +19,11 @@ const routes = [
     path: '/recepcion',
     name: 'RecepcionContador',
     component: RecepcionContador,
+  },
+  {
+    path: '/recuperado',
+    name: 'Recuperado',
+    component: Recuperado,
   },
 ]
 
