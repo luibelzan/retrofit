@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
 import Dashboard from '@/views/Dashboard.vue'
 import ETLProceso from '@/views/ETLProceso.vue'
+import RecepcionContador from '@/views/RecepcionContador.vue'
 
 const routes = [
   {
@@ -13,6 +13,11 @@ const routes = [
     path: '/excel',
     name: 'ETLproceso',
     component: ETLProceso
+  },
+  {
+    path: '/recepcion',
+    name: 'RecepcionContador',
+    component: RecepcionContador,
   },
 ]
 
