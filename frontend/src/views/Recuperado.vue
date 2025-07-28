@@ -83,7 +83,9 @@
 </template>
 
 <script>
-import Swal from "sweetalert2";
+import axios from 'axios';
+import { Modal } from 'bootstrap';
+import Swal from 'sweetalert2';
 
 export default {
   data() {

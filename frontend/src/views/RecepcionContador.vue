@@ -17,6 +17,7 @@
                     <option value="777">Iberdrola I-DE</option>
                     <option value="888">SAGEMCOM</option>
                     <option value="999">LANDIS&GYR</option>
+                    <option value="999">KAIFA</option>
                 </select>
             </div>
 
@@ -95,6 +96,9 @@
 </template>
 
 <script>
+import axios from 'axios';
+import { Modal } from 'bootstrap';
+import Swal from 'sweetalert2';
 
 export default {
     name: "RecepcionRegistros",
