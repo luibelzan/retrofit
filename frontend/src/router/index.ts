@@ -8,6 +8,7 @@ import Almacenes from '@/views/Almacenes.vue'
 import Diagnostico from '@/views/Diagnostico.vue'
 import Distribuidora from '@/views/Distribuidora.vue'
 import Fabricante from '@/views/Fabricante.vue'
+import Modelo from '@/views/Modelo.vue'
 
 const routes = [
   {
@@ -54,6 +55,11 @@ const routes = [
     path: '/fabricante',
     name: 'Fabricante',
     component: Fabricante,
+  },
+  {
+    path: '/modelo',
+    name: 'Modelo',
+    component: Modelo,
   },
 ]
 
