@@ -4,6 +4,7 @@ import ETLProceso from '@/views/ETLProceso.vue'
 import RecepcionContador from '@/views/RecepcionContador.vue'
 import Recuperado from '@/views/Recuperado.vue'
 import Achatarrado from '@/views/Achatarrado.vue'
+import Almacenes from '@/views/Almacenes.vue'
 
 const routes = [
   {
@@ -30,6 +31,11 @@ const routes = [
     path: '/achatarrado',
     name: 'Achatarrado',
     component: Achatarrado,
+  },
+  {
+    path: '/almacenes',
+    name: 'Almacenes',
+    component: Almacenes,
   },
 ]
 
