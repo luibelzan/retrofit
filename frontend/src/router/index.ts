@@ -5,6 +5,7 @@ import RecepcionContador from '@/views/RecepcionContador.vue'
 import Recuperado from '@/views/Recuperado.vue'
 import Achatarrado from '@/views/Achatarrado.vue'
 import Almacenes from '@/views/Almacenes.vue'
+import Diagnostico from '@/views/Diagnostico.vue'
 
 const routes = [
   {
@@ -36,6 +37,11 @@ const routes = [
     path: '/almacenes',
     name: 'Almacenes',
     component: Almacenes,
+  },
+  {
+    path: '/diagnostico',
+    name: 'Diagnostico',
+    component: Diagnostico,
   },
 ]
 
