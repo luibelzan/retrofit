@@ -12,6 +12,7 @@ import Modelo from '@/views/Modelo.vue'
 import Fichero from '@/views/Fichero.vue'
 import Proceso from '@/views/Proceso.vue'
 import General from '@/views/General.vue'
+import Lotes from '@/views/Lotes.vue'
 
 const routes = [
   {
@@ -78,6 +79,11 @@ const routes = [
     path: '/general',
     name: 'General',
     component: General,
+  },
+  {
+    path: '/lotes',
+    name: 'Lotes',
+    component: Lotes,
   },
 ]
 
