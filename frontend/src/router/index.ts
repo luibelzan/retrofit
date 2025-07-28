@@ -3,6 +3,7 @@ import Dashboard from '@/views/Dashboard.vue'
 import ETLProceso from '@/views/ETLProceso.vue'
 import RecepcionContador from '@/views/RecepcionContador.vue'
 import Recuperado from '@/views/Recuperado.vue'
+import Achatarrado from '@/views/Achatarrado.vue'
 
 const routes = [
   {
@@ -24,6 +25,11 @@ const routes = [
     path: '/recuperado',
     name: 'Recuperado',
     component: Recuperado,
+  },
+  {
+    path: '/achatarrado',
+    name: 'Achatarrado',
+    component: Achatarrado,
   },
 ]
 
