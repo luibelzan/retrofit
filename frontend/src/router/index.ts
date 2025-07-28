@@ -9,6 +9,7 @@ import Diagnostico from '@/views/Diagnostico.vue'
 import Distribuidora from '@/views/Distribuidora.vue'
 import Fabricante from '@/views/Fabricante.vue'
 import Modelo from '@/views/Modelo.vue'
+import Fichero from '@/views/Fichero.vue'
 
 const routes = [
   {
@@ -60,6 +61,11 @@ const routes = [
     path: '/modelo',
     name: 'Modelo',
     component: Modelo,
+  },
+  {
+    path: '/fichero',
+    name: 'Fichero',
+    component: Fichero,
   },
 ]
 
