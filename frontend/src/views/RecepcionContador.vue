@@ -17,7 +17,7 @@
                     <option value="777">Iberdrola I-DE</option>
                     <option value="888">SAGEMCOM</option>
                     <option value="999">LANDIS&GYR</option>
-                    <option value="999">KAIFA</option>
+                    <option value="666">KAIFA</option>
                 </select>
             </div>
 
