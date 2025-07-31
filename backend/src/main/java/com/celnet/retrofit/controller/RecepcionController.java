@@ -19,21 +19,24 @@ public class RecepcionController {
     private RecepcionService recepcionService;
 
     @PostMapping("/comprobar")
-    public ResponseEntity<Map<String, String>> comprobarRecepcion(@RequestBody Map<String, String> datos) throws Exception {
-        String distribuidora = datos.get("distribuidora");
-        String tipoEquipo = datos.get("tipoEquipo");
-        String almacen = datos.get("almacen");
-        String codigoBarras = datos.get("codigoBarras");
-
-        // Aquí se hace la comprobación
-        String message = recepcionService.procesarRecepcion(distribuidora, tipoEquipo, almacen, codigoBarras);
-
-        // Devolvemos el mensaje tal cual, no modificamos el mensaje aquí
+    public ResponseEntity<Map<String, String>> comprobarRecepcion(@RequestBody Map<String, String> datos) {
         Map<String, String> response = new HashMap<>();
-        response.put("message", message);
+        try {
+            String distribuidora = datos.get("distribuidora");
+            String tipoEquipo = datos.get("tipoEquipo");
+            String almacen = datos.get("almacen");
+            String codigoBarras = datos.get("codigoBarras");
 
-        return ResponseEntity.ok(response);
+            String message = recepcionService.procesarRecepcion(distribuidora, tipoEquipo, almacen, codigoBarras);
+            response.put("message", message);
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            response.put("message", e.getMessage());
+            return ResponseEntity.badRequest().body(response); // HTTP 400 con mensaje personalizado
+        }
     }
+
 
     @PostMapping("/enviar")
     public ResponseEntity<Map<String, Object>> enviarRecepcion(@RequestBody List<Map<String, String>> registros) {

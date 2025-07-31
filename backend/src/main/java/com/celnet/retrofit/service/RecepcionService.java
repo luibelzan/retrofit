@@ -31,8 +31,15 @@ public class RecepcionService {
         // Validar longitud y formato del número de serie según tipo de equipo
         validarNumeroSerie(tipoEquipo, codigoBarras);
 
+        String codigoBarrasFixed;
+        if(codigoBarras.endsWith("ME")) {
+            codigoBarrasFixed =  codigoBarras.substring(0, codigoBarras.length()-2);
+        } else {
+            codigoBarrasFixed = codigoBarras;
+        }
+
         // Verificar si el idContador (número de serie) ya existe en t_proceso
-        Optional<TProcesos> procesoExistente = tProcesosRepository.findByIdContador(codigoBarras);
+        Optional<TProcesos> procesoExistente = tProcesosRepository.findByIdContador(codigoBarrasFixed);
 
         if (procesoExistente.isPresent()) {
             TProcesos proceso = procesoExistente.get();
@@ -45,7 +52,7 @@ public class RecepcionService {
         }
 
         // Si no existe en t_proceso, verificar en t_general
-        boolean existeEnGeneral = tGeneralRepository.existeIdContador(codigoBarras);
+        boolean existeEnGeneral = tGeneralRepository.existeIdContador(codigoBarrasFixed);
         if (existeEnGeneral) {
             // Si el contador existe en t_general, lo verificamos
             return "Contador veríficado correctamente.";
@@ -124,9 +131,9 @@ public class RecepcionService {
     }
 
     private void validarNumeroSerie(String tipoEquipo, String numeroSerie) throws Exception {
-        int longitudEsperada = tipoEquipo.equals("CN") ? 18 : 20;
-        if (numeroSerie.length() != longitudEsperada || !numeroSerie.matches("^[A-Z0-9]+$")) {
-            throw new Exception("El número de serie debe tener " + longitudEsperada + " caracteres alfanuméricos en mayúsculas.");
+        //int longitud = tipoEquipo.equals("CN") ? 18 : 20;
+        if ((numeroSerie.length() != 18 && numeroSerie.length() != 20) || !numeroSerie.matches("^[A-Z0-9]+$")) {
+            throw new Exception("El número de serie debe tener 18 o 20 caracteres alfanuméricos en mayúsculas.");
         }
     }
 

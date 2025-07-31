@@ -137,8 +137,9 @@ export default {
                     });
                     this.formData.codigoBarras = '';
                 })
-                .catch(() => {
-                    Swal.fire("Error", "Error al comprobar el registro.", "error");
+                .catch((error) => {
+                    const mensaje = error.response?.data?.message || "Error al comprobar el registro.";
+                    Swal.fire("Error", mensaje, "error");
                 });
         },
         reasignarAlmacen(index) {
