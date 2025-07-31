@@ -390,7 +390,8 @@ export default {
                     if (processValue == null) {
                         return false;
                     }
-                    return processValue.toString().toLowerCase().includes(filterValue.toLowerCase());
+                    return filterValue.toLowerCase().includes(processValue.toString().toLowerCase()) ||
+                        processValue.toString().toLowerCase().includes(filterValue.toLowerCase());
                 });
             });
         },
