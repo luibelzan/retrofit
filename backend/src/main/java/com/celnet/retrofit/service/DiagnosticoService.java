@@ -42,12 +42,21 @@ public class DiagnosticoService {
 
     // Método para validar el contador antes de llamar a actualizarProceso
     public boolean validarContador(String idContador, String codDistribuidora) {
-        // Validar formato de ID del contador
-        if (!idContador.matches("[A-Z0-9]{18}")) {
-            throw new RuntimeException("El número de serie debe tener 18 caracteres alfanuméricos en mayúsculas");
+        if (idContador == null || codDistribuidora == null) {
+            throw new RuntimeException("El ID del contador y la distribuidora no pueden ser nulos");
         }
 
-        // Verificar si existe el proceso en la base de datos para la distribuidora y el contador
+        // Eliminar sufijo 'ME' si aplica
+        if (idContador.length() == 20 && idContador.endsWith("ME")) {
+            idContador = idContador.substring(0, idContador.length() - 2);
+        }
+
+        // Validar formato de ID del contador corregido
+        if (!idContador.matches("^[A-Z0-9]{18}$")) {
+            throw new RuntimeException("El número de serie debe tener exactamente 18 caracteres alfanuméricos en mayúsculas");
+        }
+
+        // Verificar si existe el proceso en la base de datos
         Optional<TProcesos> proceso = procesoRepository.findByIdContador(idContador);
         if (!proceso.isPresent()) {
             throw new RuntimeException("El contador no está recepcionado o no existe en el sistema");
@@ -60,6 +69,7 @@ public class DiagnosticoService {
 
         return true;
     }
+
 
     @Transactional
     public List<TProcesos> actualizarProcesosMasivos(List<TProcesosId> ids, Integer codDiagnostico) {

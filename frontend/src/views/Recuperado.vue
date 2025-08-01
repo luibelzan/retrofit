@@ -32,8 +32,8 @@
       <div class="form-group mb-3">
         <label for="idContador">ID Contador</label>
         <input type="text" id="idContador" class="form-control" v-model="idContador" required
-          @keyup.enter="agregarContador" pattern="^[a-zA-Z0-9]{18}$" maxlength="18"
-          title="Debe contener exactamente 18 caracteres alfanuméricos (letras y números, sin espacios ni caracteres especiales)" />
+          @keyup.enter="agregarContador" pattern="^[a-zA-Z0-9]{18, 20}$" maxlength="20"
+          title="Debe contener exactamente 18 o 20 caracteres alfanuméricos (letras y números, sin espacios ni caracteres especiales)" />
       </div>
 
       <button class="btn btn-primary" @click="agregarContador">
@@ -113,8 +113,14 @@ export default {
     async agregarContador() {
       if (this.idContador && this.codDistribuidora && this.codDiagnostico) {
         try {
+          // Eliminar sufijo 'ME' si tiene longitud 20 y termina en 'ME'
+          let idContadorProcesado = this.idContador;
+          if (idContadorProcesado.length === 20 && idContadorProcesado.endsWith("ME")) {
+            idContadorProcesado = idContadorProcesado.slice(0, -2);
+          }
+
           this.contadores.push({
-            idContador: this.idContador,
+            idContador: idContadorProcesado,
             codDistribuidora: this.codDistribuidora,
             codDiagnostico: this.codDiagnostico,
           });
