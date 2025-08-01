@@ -33,7 +33,7 @@
       <div class="form-group mb-3">
         <label for="idContador">ID Contador</label>
         <input type="text" id="idContador" class="form-control" v-model="idContador" required
-          @keyup.enter="agregarContador" pattern="^[a-zA-Z0-9]{18}$" maxlength="18"
+          @keyup.enter="agregarContador" pattern="^[a-zA-Z0-9]{18, 20}$" maxlength="20"
           title="Debe contener exactamente 18 caracteres alfanuméricos (letras y números, sin espacios ni caracteres especiales)" />
       </div>
 

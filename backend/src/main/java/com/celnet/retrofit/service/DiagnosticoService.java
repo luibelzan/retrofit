@@ -53,7 +53,7 @@ public class DiagnosticoService {
 
         // Validar formato de ID del contador corregido
         if (!idContador.matches("^[A-Z0-9]{18}$")) {
-            throw new RuntimeException("El número de serie debe tener exactamente 18 caracteres alfanuméricos en mayúsculas");
+            throw new RuntimeException("El número de serie debe tener exactamente 18 o 20 caracteres alfanuméricos en mayúsculas");
         }
 
         // Verificar si existe el proceso en la base de datos
