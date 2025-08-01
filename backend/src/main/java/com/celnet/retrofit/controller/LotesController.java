@@ -16,6 +16,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.celnet.retrofit.service.TAlmacenesService;
 
@@ -89,14 +91,26 @@ public class LotesController {
 
     // Validar un contador antes de añadirlo al lote
     @PostMapping("/validarContador")
-    public ResponseEntity<String> validarContador(@RequestParam("idContador") String idContador) {
+    public ResponseEntity<Map<String, String>> validarContador(@RequestParam("idContador") String idContador) {
+        Map<String, String> response = new HashMap<>();
         try {
-            lotesService.validarContadorRecepcionado(idContador);
-            return ResponseEntity.ok("Contador válido");
+            String idContadorFixed;
+
+            if (idContador.endsWith("ME") && idContador.length() == 20) {
+                idContadorFixed = idContador.substring(0, idContador.length() - 2);
+            } else {
+                idContadorFixed = idContador;
+            }
+
+            lotesService.validarContadorRecepcionado(idContadorFixed);
+            response.put("message", "Contador válido");
+            response.put("idContador", idContadorFixed);
+            return ResponseEntity.ok(response);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }
     }
+
 
     // Asignar lote a los contadores seleccionados
     @PostMapping("/asignar")

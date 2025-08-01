@@ -33,7 +33,7 @@
       <ul class="list-group mb-3">
         <li v-for="(contador, index) in contadores" :key="index" class="list-group-item d-flex justify-content-between">
           {{ contador }}
-          <button type="button" class="btn btn-danger btn-sm" @click="eliminarContador(index)">Eliminar</button>
+          <button type="button" class="btn btn-danger btn-sm" @click="eliminarContador(contador)">Eliminar</button>
         </li>
       </ul>
 
@@ -84,7 +84,9 @@ export default {
           }
         });
 
-        this.contadores.push(this.idContador);
+        const idContadorCorregido = response.data.idContador || this.idContador;
+
+        this.contadores.push(idContadorCorregido);
         this.idContador = "";
         Swal.fire("Éxito", "Contador válido y agregado a la lista", "success");
       } catch (error) {
