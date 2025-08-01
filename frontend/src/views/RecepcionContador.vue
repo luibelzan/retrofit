@@ -125,23 +125,32 @@ export default {
             }
         },
         comprobarRecepcion() {
-            const registro = { ...this.formData };
+    const registro = { ...this.formData };
 
-            axios
-                .post("http://localhost:8080/api/recepcion/comprobar", registro)
-                .then((response) => {
-                    this.registros.push({
-                        ...registro,
-                        nuevoAlmacen: registro.almacen,
-                        estado: response.data.message,
-                    });
-                    this.formData.codigoBarras = '';
-                })
-                .catch((error) => {
-                    const mensaje = error.response?.data?.message || "Error al comprobar el registro.";
-                    Swal.fire("Error", mensaje, "error");
-                });
-        },
+    axios
+        .post("http://localhost:8080/api/recepcion/comprobar", registro)
+        .then((response) => {
+            const codigoBarrasCorregido = response.data.codigoBarras || registro.codigoBarras;
+
+            this.registros.push({
+                ...registro,
+                codigoBarras: codigoBarrasCorregido,
+                nuevoAlmacen: registro.almacen,
+                estado: response.data.message,
+            });
+
+            // Actualizar el input con el código corregido (por si el usuario lo vuelve a usar o editar)
+            //this.formData.codigoBarras = codigoBarrasCorregido;
+
+            // Si quieres limpiarlo en lugar de dejar el corregido, descomenta la siguiente línea:
+            this.formData.codigoBarras = '';
+        })
+        .catch((error) => {
+            const mensaje = error.response?.data?.message || "Error al comprobar el registro.";
+            Swal.fire("Error", mensaje, "error");
+        });
+},
+
         reasignarAlmacen(index) {
             const registro = this.registros[index];
             if (!registro.nuevoAlmacen) {

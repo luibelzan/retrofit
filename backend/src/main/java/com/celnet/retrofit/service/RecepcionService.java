@@ -32,7 +32,7 @@ public class RecepcionService {
         validarNumeroSerie(tipoEquipo, codigoBarras);
 
         String codigoBarrasFixed;
-        if(codigoBarras.endsWith("ME")) {
+        if(codigoBarras.endsWith("ME") && codigoBarras.endsWith("ME")) {
             codigoBarrasFixed =  codigoBarras.substring(0, codigoBarras.length()-2);
         } else {
             codigoBarrasFixed = codigoBarras;

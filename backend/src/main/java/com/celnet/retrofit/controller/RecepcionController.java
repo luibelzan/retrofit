@@ -18,7 +18,7 @@ public class RecepcionController {
     @Autowired
     private RecepcionService recepcionService;
 
-    @PostMapping("/comprobar")
+   @PostMapping("/comprobar")
     public ResponseEntity<Map<String, String>> comprobarRecepcion(@RequestBody Map<String, String> datos) {
         Map<String, String> response = new HashMap<>();
         try {
@@ -27,15 +27,25 @@ public class RecepcionController {
             String almacen = datos.get("almacen");
             String codigoBarras = datos.get("codigoBarras");
 
-            String message = recepcionService.procesarRecepcion(distribuidora, tipoEquipo, almacen, codigoBarras);
+            String codigoBarrasFixed;
+            if (codigoBarras.endsWith("ME") && codigoBarras.length() == 20) {
+                codigoBarrasFixed = codigoBarras.substring(0, codigoBarras.length() - 2);
+            } else {
+                codigoBarrasFixed = codigoBarras;
+            }
+
+            String message = recepcionService.procesarRecepcion(distribuidora, tipoEquipo, almacen, codigoBarrasFixed);
+
             response.put("message", message);
+            response.put("codigoBarras", codigoBarrasFixed);
             return ResponseEntity.ok(response);
 
         } catch (Exception e) {
             response.put("message", e.getMessage());
-            return ResponseEntity.badRequest().body(response); // HTTP 400 con mensaje personalizado
+            return ResponseEntity.badRequest().body(response);
         }
     }
+
 
 
     @PostMapping("/enviar")
