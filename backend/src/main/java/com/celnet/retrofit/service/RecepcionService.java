@@ -160,4 +160,8 @@ public class RecepcionService {
             throw new Exception("No se encontró el equipo con el número de serie: " + codigoBarras);
         }
     }
+
+    public List<TAlmacenes> obtenerAlmacenesPorDistribuidora(String codDistribuidora) {
+        return recepcionRepository.findByCodDistribuidora(codDistribuidora);
+    }
 }

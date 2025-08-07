@@ -118,8 +118,9 @@ export default {
         async cargarAlmacenes() {
             const { distribuidora } = this.formData;
             try {
-                const response = await axios.get(`http://localhost:8080/api/almacenes?codDistribuidora=${distribuidora}`);
+                const response = await axios.get(`http://localhost:8080/api/recepcion/almacenes?codDistribuidora=${distribuidora}`)
                 this.almacenes = response.data;
+                console.log(`Total de almacenes para distribuidora ${distribuidora}:`, this.almacenes.length);
             } catch (error) {
                 Swal.fire("Error", "Error al cargar los almacenes.", "error");
             }

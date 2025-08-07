@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.celnet.retrofit.model.TAlmacenes;
 
 import java.util.HashMap;
 import java.util.List;
@@ -85,4 +86,11 @@ public class RecepcionController {
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @GetMapping("/almacenes")
+    public ResponseEntity<List<TAlmacenes>> obtenerAlmacenesPorDistribuidora(@RequestParam String codDistribuidora) {
+        List<TAlmacenes> almacenes = recepcionService.obtenerAlmacenesPorDistribuidora(codDistribuidora);
+        return ResponseEntity.ok(almacenes);
+    }
+
 }
