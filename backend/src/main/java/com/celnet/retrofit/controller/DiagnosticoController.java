@@ -51,6 +51,7 @@ public class DiagnosticoController {
 
         List<Map<String, Object>> idsRaw = (List<Map<String, Object>>) requestData.get("ids");  // Obtener los datos de 'ids' como una lista de Mapas
         Object codDiagnosticoObj = requestData.get("codDiagnostico");  // Obtener el código de diagnóstico (como Object)
+        String tipDiagnostico = (String) requestData.get("tipDiagnostico");
 
         // Verificar si el código de diagnóstico es un número entero (String o Integer)
         Integer codDiagnostico = null;
@@ -79,7 +80,7 @@ public class DiagnosticoController {
                 .collect(Collectors.toList());
 
         // Pasamos los parámetros a la lógica del servicio
-        List<TProcesos> procesosActualizados = diagnosticoService.actualizarProcesosMasivos(ids, codDiagnostico);
+        List<TProcesos> procesosActualizados = diagnosticoService.actualizarProcesosMasivos(ids, codDiagnostico, tipDiagnostico);
 
         // Verificar si la lista de procesos actualizados está vacía
         if (procesosActualizados.isEmpty()) {

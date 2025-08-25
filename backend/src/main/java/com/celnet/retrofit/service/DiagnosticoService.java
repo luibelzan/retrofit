@@ -72,14 +72,14 @@ public class DiagnosticoService {
 
 
     @Transactional
-    public List<TProcesos> actualizarProcesosMasivos(List<TProcesosId> ids, Integer codDiagnostico) {
+    public List<TProcesos> actualizarProcesosMasivos(List<TProcesosId> ids, Integer codDiagnostico, String tipDiagnostico) {
         List<TProcesos> procesos = new ArrayList<>();
         for (TProcesosId id : ids) {
             // Llamar primero a validarContador antes de actualizar el proceso
             if (validarContador(id.getIdContador(), id.getCodDistribuidora())) {
                 // Se asume que el diagnóstico puede ser "CH" o "RP" según el contexto
-                String tipoDiagnostico = (codDiagnostico == 1) ? "CH" : "RP";  // Puedes ajustar esta lógica según tus necesidades
-                procesos.add(actualizarProceso(id.getIdContador(), id.getCodDistribuidora(), codDiagnostico, tipoDiagnostico));
+                //String tipoDiagnostico = (codDiagnostico == 1) ? "CH" : "RP";  // Puedes ajustar esta lógica según tus necesidades
+                procesos.add(actualizarProceso(id.getIdContador(), id.getCodDistribuidora(), codDiagnostico, tipDiagnostico));
             } else {
                 // Si el contador no es válido, podrías lanzar una excepción o registrar el error
                 throw new RuntimeException("Contador o distribuidora no válidos para ID: " + id.getIdContador());
