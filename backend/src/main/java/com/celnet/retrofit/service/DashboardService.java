@@ -26,6 +26,10 @@ public class DashboardService {
     @Autowired
     private TDistribuidorasRepository distribuidorasRepository;
 
+    public Long getTotalContadores(String codDistribuidora) {
+        return tProcesosRepository.countByCodDistribuidora(codDistribuidora);
+    }
+
     public Long getTotalRecepcionados(String codDistribuidora) {
         return tProcesosRepository.countByCodDistribuidoraAndTipDiagnostico(codDistribuidora, "RC");
     }
@@ -92,7 +96,7 @@ public class DashboardService {
                     Double tasaRecuperacion = getTasaRecuperacion(codigo);
                     Long contadoresPendientesRecibir = getPendientesRecibir(codigo); // Ahora es un Long
                     Double promedioDias = getPromedioDias(codigo); // Agregar el promedio de días
-
+                    Long totalContadores = getTotalContadores(codigo);
                     // Mapear los datos en un formato legible, asegurando que sean de tipo Object
                     return Map.<String, Object>of(
                             "codigo", codigo,
@@ -103,7 +107,8 @@ public class DashboardService {
                             "totalPendientesEnviar", totalPendientesEnviar,
                             "tasaRecuperacion", tasaRecuperacion,
                             "contadoresPendientesRecibir", contadoresPendientesRecibir, // Usamos el Long directamente
-                            "promedioDias", promedioDias // Incluir el promedio de días
+                            "promedioDias", promedioDias, // Incluir el promedio de días
+                            "totalContadores", totalContadores
                     );
                 })
                 .collect(Collectors.toList());

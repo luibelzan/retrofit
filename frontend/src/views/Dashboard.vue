@@ -14,24 +14,28 @@
 
                 <div class="kpi-grid">
                     <div class="kpi-item">
-                        <p class="label">Total Recepcionados</p>
+                        <p class="label">Total Contadores</p>
+                        <p class="value">{{ distribuidora.totalContadores }}</p>
+                    </div>
+                    <div class="kpi-item">
+                        <p class="label">Total Recuperados</p>
+                        <p class="value">{{ distribuidora.totalRecuperados }}</p>
+                    </div>
+                    <div class="kpi-item">
+                        <p class="label">Total Achatarrados</p>
+                        <p class="value">{{ distribuidora.totalAchatarrados }}</p>
+                    </div>
+                    <div class="kpi-item">
+                        <p class="label">En proceso</p>
                         <p class="value">{{ distribuidora.totalRecepcionados }}</p>
                     </div>
                     <div class="kpi-item">
-                        <p class="label">Pendientes de Enviar</p>
+                        <p class="label">Por enviar</p>
                         <p class="value">{{ distribuidora.totalPendientesEnviar }}</p>
                     </div>
                     <div class="kpi-item">
                         <p class="label">Tasa de Recuperación</p>
                         <p class="value">{{ (distribuidora.tasaRecuperacion * 100).toFixed(2) }}%</p>
-                    </div>
-                    <div class="kpi-item">
-                        <p class="label">Pendientes de Recepción</p>
-                        <p class="value">{{ distribuidora.contadoresPendientesRecibir }}</p>
-                    </div>
-                    <div class="kpi-chart">
-                        <p class="label">Promedio de Días</p>
-                        <p class="value">{{ Math.round(distribuidora.promedioDias) }}</p>
                     </div>
 
                     <div class="kpi-chart">
