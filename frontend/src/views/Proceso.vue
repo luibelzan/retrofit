@@ -277,7 +277,12 @@
                             <div class="mb-3">
                                 <label for="editDesObservaciones" class="form-label">Observación</label>
                                 <input type="text" id="editDesObservaciones" v-model="currentProceso.desObservaciones"
-                                    class="form-control" required pattern=".{1,250}" title="Máximo 250 caracteres">
+                                    class="form-control" pattern=".{1,250}" title="Máximo 250 caracteres">
+                            </div>
+                            <div class="mb-3">
+                                <label for="editDesObservaciones" class="form-label">Id Lote</label>
+                                <input type="text" id="editIdLote" v-model="currentProceso.idLote"
+                                    class="form-control" min="1" title="Numero valido">
                             </div>
                             <button type="submit" class="btn btn-primary">Actualizar</button>
                         </form>
