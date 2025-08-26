@@ -18,6 +18,7 @@
                     <option value="888">SAGEMCOM</option>
                     <option value="999">LANDIS&GYR</option>
                     <option value="555">KAIFA</option>
+                    <option value="444">Celnet</option>
                 </select>
             </div>
 

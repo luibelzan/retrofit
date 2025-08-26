@@ -107,7 +107,7 @@ export default {
             const logos = {
                 'SAGEMCOM': '/images/sagemcom.png',
                 'LANDIS&GYR': '/images/landis&gyr.png',
-                'IBERDROLA-IDE': '/images/iberdrola-ide.png',
+                'IBERDROLA': '/images/iberdrola-ide.png',
                 'KAIFA': '/images/kaifa.png',
             };
 
