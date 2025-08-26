@@ -158,6 +158,7 @@ export default {
               codDistribuidora: c.codDistribuidora,
             })),
             codDiagnostico: this.codDiagnostico,
+            tipDiagnostico: "RC"
           }),
         });
 
