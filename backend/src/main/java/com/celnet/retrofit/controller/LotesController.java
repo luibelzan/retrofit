@@ -91,7 +91,7 @@ public class LotesController {
 
     // Validar un contador antes de añadirlo al lote
     @PostMapping("/validarContador")
-    public ResponseEntity<Map<String, String>> validarContador(@RequestParam("idContador") String idContador) {
+    public ResponseEntity<Map<String, String>> validarContador(@RequestParam("idContador") String idContador, @RequestParam("codDistribuidora") String codDistribuidora) {
         Map<String, String> response = new HashMap<>();
         try {
             String idContadorFixed;
@@ -102,7 +102,7 @@ public class LotesController {
                 idContadorFixed = idContador;
             }
 
-            lotesService.validarContadorRecepcionado(idContadorFixed);
+            lotesService.validarContadorRecepcionado(idContadorFixed, codDistribuidora);
             response.put("message", "Contador válido");
             response.put("idContador", idContadorFixed);
             return ResponseEntity.ok(response);

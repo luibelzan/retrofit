@@ -74,9 +74,9 @@ public class LotesService {
         }
 
         for (String idContador : idContadores) {
-            validarContadorRecepcionado(idContador);
+            validarContadorRecepcionado(idContador, distribuidora);
 
-            Optional<TProcesos> procesoOpt = tProcesosRepository.findByIdContador(idContador);
+            Optional<TProcesos> procesoOpt = tProcesosRepository.findByIdContadorAndCodDistribuidora(idContador, distribuidora);
             if (procesoOpt.isPresent()) {
                 TProcesos proceso = procesoOpt.get();
                 proceso.setIdLote(idLote);
@@ -87,8 +87,8 @@ public class LotesService {
         return "Lote " + idLote + " asignado a " + idContadores.size() + " contadores.";
     }
 
-    public void validarContadorRecepcionado(String idContador) {
-        Optional<TProcesos> procesoOpt = tProcesosRepository.findByIdContador(idContador);
+    public void validarContadorRecepcionado(String idContador, String codDistribuidora) {
+        Optional<TProcesos> procesoOpt = tProcesosRepository.findByIdContadorAndCodDistribuidora(idContador, codDistribuidora);
 
         if (procesoOpt.isEmpty()) {
             throw new IllegalArgumentException("El contador con ID " + idContador + " no existe en t_procesos.");

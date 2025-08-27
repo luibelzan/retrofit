@@ -81,7 +81,8 @@ export default {
 
         const response = await axios.post("http://localhost:8080/api/lotes/validarContador", null, {
           params: {
-            idContador: this.idContador
+            idContador: this.idContador,
+            codDistribuidora: this.codDistribuidora
           }
         });
 

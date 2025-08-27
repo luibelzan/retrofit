@@ -37,7 +37,7 @@ public class DiagnosticoService {
         }
 
         // Recuperar y devolver el proceso actualizado
-        return procesoRepository.findByIdContador(idContador).orElseThrow(() -> new RuntimeException("Proceso no encontrado"));
+        return procesoRepository.findByIdContadorAndCodDistribuidora(idContador, codDistribuidora).orElseThrow(() -> new RuntimeException("Proceso no encontrado"));
     }
 
     // Método para validar el contador antes de llamar a actualizarProceso
@@ -57,7 +57,7 @@ public class DiagnosticoService {
         }
 
         // Verificar si existe el proceso en la base de datos
-        Optional<TProcesos> proceso = procesoRepository.findByIdContador(idContador);
+        Optional<TProcesos> proceso = procesoRepository.findByIdContadorAndCodDistribuidora(idContador, codDistribuidora);
         if (!proceso.isPresent()) {
             throw new RuntimeException("El contador no está recepcionado o no existe en el sistema");
         }

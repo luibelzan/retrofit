@@ -20,6 +20,9 @@ public interface TProcesosRepository extends JpaRepository<TProcesos, TProcesosI
 
     List<TProcesos> findByIdLote(Integer idLote);
 
+    @Query("SELECT p FROM TProcesos p WHERE p.idContador = :idContador AND p.codDistribuidora = :codDistribuidora")
+    Optional<TProcesos> findByIdContadorAndCodDistribuidora(String idContador, String codDistribuidora);
+
     // Contar registros por distribuidora y diagnóstico
     @Query("SELECT COUNT(p) FROM TProcesos p WHERE p.codDistribuidora = :codDistribuidora AND p.tipDiagnostico = :tipDiagnostico")
     Long countByCodDistribuidoraAndTipDiagnostico(String codDistribuidora, String tipDiagnostico);

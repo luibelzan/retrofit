@@ -39,7 +39,7 @@ public class RecepcionService {
         }
 
         // Verificar si el idContador (número de serie) ya existe en t_proceso
-        Optional<TProcesos> procesoExistente = tProcesosRepository.findByIdContador(codigoBarrasFixed);
+        Optional<TProcesos> procesoExistente = tProcesosRepository.findByIdContadorAndCodDistribuidora(codigoBarrasFixed, distribuidora);
 
         if (procesoExistente.isPresent()) {
             TProcesos proceso = procesoExistente.get();
@@ -79,12 +79,12 @@ public class RecepcionService {
         Date fecAveria = generalData.map(TGeneral::getFecAveria).orElse(java.sql.Date.valueOf("1970-01-01"));
         String desAveria = generalData.map(TGeneral::getDesAveria).orElse("Sin datos.");
         String desObservaciones = generalData.map(TGeneral::getDesObservaciones).orElse("NO WEB");
-
+        Date hoy = new Date();
         // Verificar si ya existe un proceso con el idContador
-        Optional<TProcesos> procesoExistente = tProcesosRepository.findByIdContador(codigoBarras);
+        Optional<TProcesos> procesoExistente = tProcesosRepository.findByIdContadorAndCodDistribuidora(codigoBarras, distribuidora);
 
         TProcesos proceso;
-        if (procesoExistente.isPresent()) {
+        if (procesoExistente.isPresent() && "RP".equals(procesoExistente.get().getTipDiagnostico())) {
             // Actualizar registro existente
             proceso = procesoExistente.get();
             proceso.setCodAlmacen(Integer.valueOf(almacen));
@@ -98,6 +98,11 @@ public class RecepcionService {
             proceso.setCodFabricante(extraerCodFabricante(codigoBarras));
             proceso.setCodModelo(extraerCodModelo(codigoBarras));
             proceso.setAnoFabricacion(extraerAnoFabricacion(codigoBarras));
+
+            //Actualiza la fecha de recepcion 2
+            proceso.setFecRecepcion2(hoy);
+        } else if(procesoExistente.isPresent() && !"RP".equals(procesoExistente.get().getTipDiagnostico())) {
+            return;
         } else {
             // Crear un nuevo registro
             proceso = new TProcesos();
@@ -116,7 +121,7 @@ public class RecepcionService {
             proceso.setCodDiagnostico(33);
         }
 
-// Guardar el registro (nuevo o actualizado)
+        // Guardar el registro (nuevo o actualizado)
         tProcesosRepository.save(proceso);
 
     }
@@ -149,8 +154,8 @@ public class RecepcionService {
         return "20" + numeroSerie.substring(7, 9);
     }
 
-    public void reasignarAlmacen(String codigoBarras, String nuevoAlmacen) throws Exception {
-        Optional<TProcesos> procesoOpt = tProcesosRepository.findByIdContador(codigoBarras);
+    public void reasignarAlmacen(String codigoBarras, String nuevoAlmacen, String codDistribuidora) throws Exception {
+        Optional<TProcesos> procesoOpt = tProcesosRepository.findByIdContadorAndCodDistribuidora(codigoBarras, codDistribuidora);
 
         if (procesoOpt.isPresent()) {
             TProcesos proceso = procesoOpt.get();
