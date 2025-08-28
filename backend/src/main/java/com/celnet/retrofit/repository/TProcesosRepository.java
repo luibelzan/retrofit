@@ -16,40 +16,54 @@ import java.util.Optional;
 
 @Repository
 public interface TProcesosRepository extends JpaRepository<TProcesos, TProcesosId> {
-    Optional<TProcesos> findByIdContador(String idContador);
+        Optional<TProcesos> findByIdContador(String idContador);
 
-    List<TProcesos> findByIdLote(Integer idLote);
+        List<TProcesos> findByIdLote(Integer idLote);
 
-    @Query("SELECT p FROM TProcesos p WHERE p.idContador = :idContador AND p.codDistribuidora = :codDistribuidora")
-    Optional<TProcesos> findByIdContadorAndCodDistribuidora(String idContador, String codDistribuidora);
+        @Query("SELECT p FROM TProcesos p WHERE p.idContador = :idContador AND p.codDistribuidora = :codDistribuidora")
+        Optional<TProcesos> findByIdContadorAndCodDistribuidora(String idContador, String codDistribuidora);
 
-    // Contar registros por distribuidora y diagnóstico
-    @Query("SELECT COUNT(p) FROM TProcesos p WHERE p.codDistribuidora = :codDistribuidora AND p.tipDiagnostico = :tipDiagnostico")
-    Long countByCodDistribuidoraAndTipDiagnostico(String codDistribuidora, String tipDiagnostico);
+        // Contar registros por distribuidora y diagnóstico
+        @Query("SELECT COUNT(p) FROM TProcesos p WHERE p.codDistribuidora = :codDistribuidora AND p.tipDiagnostico = :tipDiagnostico")
+        Long countByCodDistribuidoraAndTipDiagnostico(String codDistribuidora, String tipDiagnostico);
 
-    // Contar registros por distribuidora y diagnóstico con campo codLote nulo
-    @Query("SELECT COUNT(p) FROM TProcesos p WHERE p.codDistribuidora = :codDistribuidora AND p.tipDiagnostico = :tipDiagnostico AND p.idLote IS NULL")
-    Long countByCodDistribuidoraAndTipDiagnosticoAndCodLoteIsNull(@Param("codDistribuidora") String codDistribuidora, @Param("tipDiagnostico") String tipDiagnostico);
+        // Contar registros por distribuidora y diagnóstico con campo codLote nulo
+        @Query("SELECT COUNT(p) FROM TProcesos p WHERE p.codDistribuidora = :codDistribuidora AND p.tipDiagnostico = :tipDiagnostico AND p.idLote IS NULL")
+        Long countByCodDistribuidoraAndTipDiagnosticoAndCodLoteIsNull(
+                        @Param("codDistribuidora") String codDistribuidora,
+                        @Param("tipDiagnostico") String tipDiagnostico);
 
-    // Contar todos los registros de una distribuidora
-    @Query("SELECT COUNT(p) FROM TProcesos p WHERE p.codDistribuidora = :codDistribuidora")
-    Long countByCodDistribuidora(String codDistribuidora);
+        // Contar todos los registros de una distribuidora
+        @Query("SELECT COUNT(p) FROM TProcesos p WHERE p.codDistribuidora = :codDistribuidora")
+        Long countByCodDistribuidora(String codDistribuidora);
 
-    // Calcular tiempo medio de procesado en días por distribuidora
-    @Query("SELECT p.fecRecepcion, p.fecProceso FROM TProcesos p WHERE p.idContador = :id")
-    List<Object[]> getTimestamps(@Param("id") String id);
+        // Calcular tiempo medio de procesado en días por distribuidora
+        @Query("SELECT p.fecRecepcion, p.fecProceso FROM TProcesos p WHERE p.idContador = :id")
+        List<Object[]> getTimestamps(@Param("id") String id);
 
-    // Método para obtener las fechas de proceso y recepción
-    @Query(value = "SELECT fec_proceso, fec_recepcion FROM t_proceso WHERE cod_distribuidora = :codDistribuidora AND fec_proceso IS NOT NULL AND fec_recepcion IS NOT NULL", nativeQuery = true)
-    List<Object[]> findProcesoDatesByDistribuidora(@Param("codDistribuidora") String codDistribuidora);
+        // Método para obtener las fechas de proceso y recepción
+        @Query(value = "SELECT fec_proceso, fec_recepcion FROM t_proceso WHERE cod_distribuidora = :codDistribuidora AND fec_proceso IS NOT NULL AND fec_recepcion IS NOT NULL", nativeQuery = true)
+        List<Object[]> findProcesoDatesByDistribuidora(@Param("codDistribuidora") String codDistribuidora);
 
-    @Modifying
-    @Transactional
-    @Query("UPDATE TProcesos p SET p.codDiagnostico = :codDiagnostico, p.tipDiagnostico = :tipDiagnostico, p.fecProceso = :fecProceso " +
-            "WHERE p.codDistribuidora = :codDistribuidora AND p.idContador = :idContador")
-    int updateDiagnostico(@Param("codDistribuidora") String codDistribuidora,
-                          @Param("idContador") String idContador,
-                          @Param("tipDiagnostico") String tipDiagnostico,
-                          @Param("codDiagnostico") Integer codDiagnostico,
-                          @Param("fecProceso") LocalDate fecProceso);
+        @Modifying
+        @Transactional
+        @Query("UPDATE TProcesos p SET p.codDiagnostico = :codDiagnostico, p.tipDiagnostico = :tipDiagnostico, p.fecProceso = :fecProceso, p.fecProceso2 = :fecProceso, p.tipDiagnostico2 = :tipDiagnostico, p.codDiagnostico2 = :codDiagnostico "
+                        +
+                        "WHERE p.codDistribuidora = :codDistribuidora AND p.idContador = :idContador")
+        int updateDiagnostico(@Param("codDistribuidora") String codDistribuidora,
+                        @Param("idContador") String idContador,
+                        @Param("tipDiagnostico") String tipDiagnostico,
+                        @Param("codDiagnostico") Integer codDiagnostico,
+                        @Param("fecProceso") LocalDate fecProceso);
+
+        @Modifying
+        @Transactional
+        @Query("UPDATE TProcesos p SET p.codDiagnostico2 = :codDiagnostico2, p.tipDiagnostico2 = :tipDiagnostico2, p.fecProceso2 = :fecProceso2 "
+                        +
+                        "WHERE p.codDistribuidora = :codDistribuidora AND p.idContador = :idContador")
+        int updateDiagnosticoWithFecRecepcion2(@Param("codDistribuidora") String codDistribuidora,
+                        @Param("idContador") String idContador,
+                        @Param("tipDiagnostico2") String tipDiagnostico2,
+                        @Param("codDiagnostico2") Integer codDiagnostico2,
+                        @Param("fecProceso2") LocalDate fecProceso2);
 }

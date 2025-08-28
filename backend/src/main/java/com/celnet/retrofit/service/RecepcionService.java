@@ -91,8 +91,8 @@ public class RecepcionService {
             proceso.setFecAveria(fecAveria);
             proceso.setDesAveria(desAveria);
             proceso.setDesObservaciones(desObservaciones);
-            proceso.setTipDiagnostico("RC");
-            proceso.setCodDiagnostico(33);
+            proceso.setTipDiagnostico2("RC");
+            proceso.setCodDiagnostico2(33);
 
             // Actualizar los valores de fabricante, modelo, año de fabricación y fecha de recepción
             proceso.setCodFabricante(extraerCodFabricante(codigoBarras));

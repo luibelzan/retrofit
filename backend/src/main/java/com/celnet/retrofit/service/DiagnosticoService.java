@@ -28,8 +28,14 @@ public class DiagnosticoService {
     // Método refactorizado para actualizar el diagnóstico y la fecha de proceso
     @Transactional
     public TProcesos actualizarProceso(String idContador, String codDistribuidora, Integer codDiagnostico, String tipDiagnostico) {
-        // Actualizar directamente el diagnóstico y la fecha de proceso sin validar existencia del proceso
-        int updatedRows = procesoRepository.updateDiagnostico(codDistribuidora, idContador, tipDiagnostico, codDiagnostico, LocalDate.now());
+        TProcesos p = procesoRepository.findByIdContadorAndCodDistribuidora(idContador, codDistribuidora).get();
+        int updatedRows = 0;
+        if(p.getFecRecepcion2() != null) {
+            updatedRows = procesoRepository.updateDiagnosticoWithFecRecepcion2(codDistribuidora, idContador, tipDiagnostico, codDiagnostico, LocalDate.now());
+        } else {
+            // Actualizar directamente el diagnóstico y la fecha de proceso sin validar existencia del proceso
+            updatedRows = procesoRepository.updateDiagnostico(codDistribuidora, idContador, tipDiagnostico, codDiagnostico, LocalDate.now());
+        }
 
         if (updatedRows == 0) {
             throw new RuntimeException(
