@@ -209,7 +209,7 @@ export default {
             return almacen ? almacen.desAlmacen : "Almacén no encontrado";
         },
         getEstadoClass(estado) {
-            if (estado === "Este contador ya ha sido recepcionado previamente, revíselo antes de continuar.") {
+            if (estado.includes("Este contador ya ha sido recepcionado previamente, revíselo antes de continuar") || estado.includes("Este contador ya ha sido recepcionado y procesado previamente")) {
                 return 'estado-warning';
             } else if (estado === "Contador veríficado correctamente.") {
                 return 'estado-success';

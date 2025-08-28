@@ -45,10 +45,22 @@ public class RecepcionService {
             TProcesos proceso = procesoExistente.get();
 
             // Verificar si CodFabricante, CodModelo o AnoFabricacion están vacíos o nulos
-            if (proceso.getCodFabricante() != null && proceso.getCodModelo() != null && proceso.getAnoFabricacion() != null) {
-                // Si hay valores en estos campos, retornamos el mensaje de que el proceso existe
-                return "Este contador ya ha sido recepcionado previamente, revíselo antes de continuar.";
-            }
+            if(proceso.getCodFabricante() != null && proceso.getCodModelo() != null && proceso.getAnoFabricacion() != null && proceso.getFecRecepcion() != null && proceso.getFecProceso2() != null) {
+                if(proceso.getFecRecepcion2() == null) {
+                    return "Este contador ya ha sido recepcionado y procesado previamente. Tipo diagnostico: " + proceso.getTipDiagnostico2() + " Codigo diagnostico: " + proceso.getCodDiagnostico2() + " Fecha recepcion: " + proceso.getFecRecepcion();
+                } else {
+                    return "Este contador ya ha sido recepcionado y procesado previamente. Tipo diagnostico: " + proceso.getTipDiagnostico() + " Codigo diagnostico: " + proceso.getCodDiagnostico() + " Fecha recepcion: " + proceso.getFecRecepcion2();
+                }
+                
+            } else if (proceso.getCodFabricante() != null && proceso.getCodModelo() != null && proceso.getAnoFabricacion() != null) {
+                if(proceso.getFecRecepcion2() == null) {
+                    // Si hay valores en estos campos, retornamos el mensaje de que el proceso existe
+                    return "Este contador ya ha sido recepcionado previamente, revíselo antes de continuar. Fecha de recepcion: " + proceso.getFecRecepcion();
+                } else {
+                    return "Este contador ya ha sido recepcionado previamente, revíselo antes de continuar. Fecha de recepcion: " + proceso.getFecRecepcion2();
+                }
+                
+            } 
         }
 
         // Si no existe en t_proceso, verificar en t_general
@@ -92,7 +104,7 @@ public class RecepcionService {
             proceso.setDesAveria(desAveria);
             proceso.setDesObservaciones(desObservaciones);
             proceso.setTipDiagnostico2("RC");
-            proceso.setCodDiagnostico2(33);
+            proceso.setCodDiagnostico2(30);
 
             // Actualizar los valores de fabricante, modelo, año de fabricación y fecha de recepción
             proceso.setCodFabricante(extraerCodFabricante(codigoBarras));
@@ -118,7 +130,10 @@ public class RecepcionService {
             proceso.setDesAveria(desAveria);
             proceso.setDesObservaciones(desObservaciones);
             proceso.setTipDiagnostico("RC");
-            proceso.setCodDiagnostico(33);
+            proceso.setCodDiagnostico(30);
+            //proceso.setFecRecepcion2(new Date());
+            proceso.setTipDiagnostico2("RC");
+            proceso.setCodDiagnostico2(30);
         }
 
         // Guardar el registro (nuevo o actualizado)
