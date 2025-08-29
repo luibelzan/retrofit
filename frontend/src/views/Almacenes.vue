@@ -91,11 +91,12 @@
                     <div class="modal-body">
                         <form @submit.prevent="createAlmacen">
                             <div class="mb-3">
-                                <label for="createCodDistribuidora" class="form-label">Código Distribuidora</label>
-                                <input type="text" id="createCodDistribuidora" v-model="newAlmacen.codDistribuidora"
-                                    class="form-control" pattern="^[A-Za-z0-9]{3}$"
-                                    title="El código distribuidora debe ser alfanumérico y tener exactamente 3 caracteres."
-                                    required>
+                                <label for="distribuidora">Distribuidora</label>
+                                <select id="distribuidora" class="form-select" v-model="newAlmacen.codDistribuidora" required>
+                                    <option v-for="dist in distribuidoras" :key="dist.codDistribuidora" :value="dist.codDistribuidora">
+                                        {{ dist.nomDistribuidora }}
+                                    </option>
+                                </select>
                             </div>
                             <div class="mb-3">
                                 <label for="createCodAlmacen" class="form-label">Código Almacén</label>
@@ -112,7 +113,7 @@
                             <div class="mb-3">
                                 <label for="createDirAlmacen" class="form-label">Dirección</label>
                                 <input type="text" id="createDirAlmacen" v-model="newAlmacen.dirAlmacen"
-                                    class="form-control" pattern="^[A-Za-z0-9\s,.-]{1,200}$"
+                                    class="form-control" pattern="^[A-Za-z0-9\s,.\-]{1,200}$"
                                     title="La dirección debe ser alfanumérica y puede contener espacios, comas, puntos y guiones. Máximo 200 caracteres."
                                     required>
                             </div>
@@ -153,9 +154,12 @@
                     <div class="modal-body">
                         <form @submit.prevent="updateAlmacen">
                             <div class="mb-3">
-                                <label for="editCodDistribuidora" class="form-label">Código Distribuidora</label>
-                                <input type="text" id="editCodDistribuidora" v-model="currentAlmacen.codDistribuidora"
-                                    class="form-control" readonly>
+                                <label for="editCodDistribuidora" class="form-label">Distribuidora</label>
+                                <select id="editCodDistribuidora" class="form-select" v-model="currentAlmacen.codDistribuidora" disabled>
+                                    <option v-for="dist in distribuidoras" :key="dist.codDistribuidora" :value="dist.codDistribuidora">
+                                        {{ dist.nomDistribuidora }}
+                                    </option>
+                                </select>
                             </div>
                             <div class="mb-3">
                                 <label for="editCodAlmacen" class="form-label">Código Almacén</label>
@@ -171,26 +175,26 @@
                             <div class="mb-3">
                                 <label for="editDirAlmacen" class="form-label">Dirección</label>
                                 <input type="text" id="editDirAlmacen" v-model="currentAlmacen.dirAlmacen"
-                                    class="form-control" pattern="^[A-Za-z0-9\s,.-]{1,200}$"
+                                    class="form-control" pattern="^[A-Za-z0-9\s,.\-]{1,200}$"
                                     title="La dirección debe ser alfanumérica y puede contener espacios, comas, puntos y guiones. Máximo 200 caracteres.">
                             </div>
                             <div class="mb-3">
                                 <label for="editCpAlmacen" class="form-label">Código Postal</label>
                                 <input type="text" id="editCpAlmacen" v-model="currentAlmacen.cpAlmacen"
                                     class="form-control" pattern="^\d{5}$"
-                                    title="El código postal debe ser numérico y tener exactamente 5 dígitos.">>
+                                    title="El código postal debe ser numérico y tener exactamente 5 dígitos.">
                             </div>
                             <div class="mb-3">
                                 <label for="editNomEncargado" class="form-label">Nombre Encargado</label>
                                 <input type="text" id="editNomEncargado" v-model="currentAlmacen.nomEncargado"
                                     class="form-control" pattern="^[A-Za-z\s]{1,40}$"
-                                    title="El nombre del encargado debe ser alfabético y puede tener hasta 40 caracteres.">>
+                                    title="El nombre del encargado debe ser alfabético y puede tener hasta 40 caracteres.">
                             </div>
                             <div class="mb-3">
                                 <label for="editTelEncargado" class="form-label">Teléfono Encargado</label>
                                 <input type="text" id="editTelEncargado" v-model="currentAlmacen.telEncargado"
                                     class="form-control" pattern="^\d{9}$"
-                                    title="El teléfono debe ser un número de 9 dígitos (sin guiones ni espacios).">>
+                                    title="El teléfono debe ser un número de 9 dígitos (sin guiones ni espacios).">
                             </div>
                             <button type="submit" class="btn btn-primary">Actualizar</button>
                         </form>
@@ -230,6 +234,8 @@ import Swal from 'sweetalert2';
 export default {
     data() {
         return {
+            distribuidoras: [],
+            codDistribuidora: "",
             almacenes: [],
             currentPage: 1,
             pageSize: 10, 
@@ -279,6 +285,14 @@ export default {
         },
     },
     methods: {
+        async fetchData() {
+            try {
+                const resDistribuidoras = await fetch("http://localhost:8080/api/achatarrado/distribuidoras");
+                this.distribuidoras = await resDistribuidoras.json();
+            } catch (error) {
+                console.error("Error cargando datos:", error);
+            }
+        },
         fetchAlmacenes() {
             axios.get('http://localhost:8080/api/almacenes')
                 .then(response => {
@@ -399,6 +413,7 @@ export default {
         },
     },
     mounted() {
+        this.fetchData();
         this.fetchAlmacenes();
 
         const createModalEl = document.getElementById('createModal');
