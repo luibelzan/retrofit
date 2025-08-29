@@ -76,22 +76,21 @@ public class RecepcionService {
 
     public void guardarRecepcion(String distribuidora, String tipoEquipo, String almacen, String codigoBarras) throws Exception {
         // Verificar existencia en t_general y asignar valores por defecto si no existe
-        Optional<TGeneral> generalData = Optional.empty();
-        if (tGeneralRepository.existeIdContador(codigoBarras)) {
-            List<String> contadores = tGeneralRepository.findAllIdContadores();
-            generalData = contadores.stream()
-                    .filter(id -> id.equals(codigoBarras))
-                    .map(id -> tGeneralRepository.findById(new TGeneralId(id, obtenerUltimaFecha(id))))
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
-                    .findFirst();
+        Optional<TGeneral> cnt = tGeneralRepository.findByIdContadorAndCodDistribuidora(codigoBarras, distribuidora);
+        Date fecAveria;
+        String desAveria;
+        String desObservaciones;
+        Date hoy = new Date();
+        if(cnt.get() != null) {
+            fecAveria = cnt.get().getFecAveria();
+            desAveria = cnt.get().getDesAveria();
+            desObservaciones = cnt.get().getDesObservaciones();
+        } else {
+            fecAveria = java.sql.Date.valueOf("1970-01-01");
+            desAveria = "Sin datos.";
+            desObservaciones = "NO WEB";
         }
 
-        // Asignar valores del registro de TGeneral si existe, o valores predeterminados si no existe
-        Date fecAveria = generalData.map(TGeneral::getFecAveria).orElse(java.sql.Date.valueOf("1970-01-01"));
-        String desAveria = generalData.map(TGeneral::getDesAveria).orElse("Sin datos.");
-        String desObservaciones = generalData.map(TGeneral::getDesObservaciones).orElse("NO WEB");
-        Date hoy = new Date();
         // Verificar si ya existe un proceso con el idContador
         Optional<TProcesos> procesoExistente = tProcesosRepository.findByIdContadorAndCodDistribuidora(codigoBarras, distribuidora);
 
