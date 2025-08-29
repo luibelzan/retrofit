@@ -18,6 +18,9 @@ public class TDistribuidoras {
     @Column(name = "precio_contador")
     private Float precioContador;
 
+    @Column(name = "garantia")
+    private Integer garantia;
+
     public String getCodDistribuidora() {
         return codDistribuidora;
     }
@@ -48,6 +51,14 @@ public class TDistribuidoras {
 
     public void setPrecioContador(Float precioContador) {
         this.precioContador = precioContador;
+    }
+
+    public Integer getGarantia() {
+        return garantia;
+    }
+
+    public void setGarantia(Integer garantia) {
+        this.garantia = garantia;
     }
 }
 
