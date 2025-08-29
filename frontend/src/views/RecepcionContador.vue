@@ -200,9 +200,14 @@ export default {
                     Swal.fire("Éxito", "Registros enviados exitosamente.", "success");
                     this.registros = [];
                 })
-                .catch(() => {
-                    Swal.fire("Error", "Error al enviar los registros.", "error");
-                });
+                .catch(error => {
+        // Revisa si el backend devolvió un JSON con message
+        const mensaje = error.response?.data?.message 
+                        || error.message 
+                        || "Error al enviar los registros.";
+        Swal.fire("Error", mensaje, "error");
+        console.error(error); // Para ver todo el error en la consola
+    });
         },
         getAlmacenNombre(codigoAlmacen) {
             const almacen = this.almacenes.find(alm => alm.codAlmacen === codigoAlmacen);

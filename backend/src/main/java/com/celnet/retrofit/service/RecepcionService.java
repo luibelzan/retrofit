@@ -87,7 +87,7 @@ public class RecepcionService {
         String desAveria;
         String desObservaciones;
         Date hoy = new Date();
-        if(cnt.get() != null) {
+        if(cnt.isPresent()) {
             fecAveria = cnt.get().getFecAveria();
             desAveria = cnt.get().getDesAveria();
             desObservaciones = cnt.get().getDesObservaciones();
