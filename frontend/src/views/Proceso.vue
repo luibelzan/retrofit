@@ -79,6 +79,21 @@
                             <input type="text" class="form-control mt-1" v-model="filters.idLote"
                                 placeholder="Filtrar...">
                         </th>
+                        <th>
+                            Fecha Proceso
+                            <input type="text" class="form-control mt-1" v-model="filters.fecProceso2"
+                                placeholder="Filtrar...">
+                        </th>
+                        <th>
+                            Contador Sustitucion
+                            <input type="text" class="form-control mt-1" v-model="filters.idContadorSustitucion"
+                                placeholder="Filtrar...">
+                        </th>
+                        <th>
+                            Facturado
+                            <input type="text" class="form-control mt-1" v-model="filters.facturado"
+                                placeholder="Filtrar...">
+                        </th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -87,10 +102,10 @@
                         :key="proceso.codDistribuidora + proceso.idContador + proceso.fecRecepcion">
                         <td>{{ proceso.codDistribuidora }}</td>
                         <td>{{ proceso.idContador }}</td>
-                        <td>{{ formatDate(proceso.fecRecepcion) }}</td>
+                        <td>{{ proceso.fecRecepcion2 ? formatDate(proceso.fecRecepcion2) : formatDate(proceso.fecRecepcion) }}</td>
                         <td>{{ proceso.tipEquipo }}</td>
-                        <td>{{ proceso.tipDiagnostico }}</td>
-                        <td>{{ proceso.codDiagnostico }}</td>
+                        <td>{{ proceso.tipDiagnostico2 }}</td>
+                        <td>{{ proceso.codDiagnostico2 }}</td>
                         <td>{{ proceso.codFabricante }}</td>
                         <td>{{ proceso.codModelo }}</td>
                         <td>{{ proceso.anoFabricacion }}</td>
@@ -99,6 +114,9 @@
                         <td>{{ proceso.desAveria }}</td>
                         <td>{{ proceso.desObservaciones }}</td>
                         <td>{{ proceso.idLote }}</td>
+                        <td>{{ formatDate(proceso.fecProceso2) }}</td>
+                        <td>{{ proceso.idContadorSustitucion }}</td>
+                        <td>{{ proceso.facturado }}</td>
                         <td>
                             <div class="btn-group" role="group">
                                 <button type="button" class="btn btn-info btn-sm"
