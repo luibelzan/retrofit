@@ -48,7 +48,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="almacen in paginatedAlmacenes" :key="almacen.codAlmacen">
+                    <tr v-for="almacen in paginatedAlmacenes" :key="`${almacen.codDistribuidora}-${almacen.codAlmacen}`">
                         <td>{{ almacen.codDistribuidora }}</td>
                         <td>{{ almacen.codAlmacen }}</td>
                         <td>{{ almacen.desAlmacen }}</td>
