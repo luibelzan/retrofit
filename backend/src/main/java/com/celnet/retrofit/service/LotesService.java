@@ -27,12 +27,19 @@ public class LotesService {
         if (tLotesRepository.existsById(new TLotesId(lote.getCodDistribuidora(), lote.getIdLote()))) {
             throw new IllegalArgumentException("El lote ya existe.");
         }
+        lote.setEstadoLote("A");
+
         return tLotesRepository.save(lote);
     }
 
     // Leer todos los lotes
     public List<TLotes> getAllLotes() {
         return tLotesRepository.findAll();
+    }
+
+    // Leer todos los lotes
+    public List<TLotes> getOpenedLotes() {
+        return tLotesRepository.findByEstadoLote("A");
     }
 
     // Leer un lote específico por ID compuesto
@@ -44,14 +51,21 @@ public class LotesService {
 
     // Actualizar un lote existente
     public TLotes updateLote(String codDistribuidora, Integer idLote, TLotes loteDetalles) {
-        TLotesId loteId = new TLotesId(codDistribuidora, idLote);
-        TLotes lote = tLotesRepository.findById(loteId)
+        //TLotesId loteId = new TLotesId(codDistribuidora, idLote);
+        TLotes lote = tLotesRepository.findByIdLoteAndCodDistribuidora(idLote, codDistribuidora)
                 .orElseThrow(() -> new IllegalArgumentException("El lote no existe."));
 
         // Actualizar los campos relevantes
         lote.setNomLote(loteDetalles.getNomLote());
         lote.setCodAlmacen(loteDetalles.getCodAlmacen());
         lote.setFecLote(loteDetalles.getFecLote());
+
+        return tLotesRepository.save(lote);
+    }
+
+    public TLotes cerrarLote(String codDistribuidora, Integer idLote) {
+        TLotes lote = tLotesRepository.findByIdLoteAndCodDistribuidora(idLote, codDistribuidora).orElseThrow(() -> new IllegalArgumentException("Lote no encontrado"));
+        lote.setEstadoLote("C");
 
         return tLotesRepository.save(lote);
     }

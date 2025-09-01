@@ -28,6 +28,7 @@
                                 <button class="btn btn-info btn-sm" @click="abrirModalVer(lote)">Ver</button>
                                 <button class="btn btn-warning btn-sm" @click="abrirModalEditar(lote)">Editar</button>
                                 <button class="btn btn-danger btn-sm" @click="eliminarLote(lote)">Eliminar</button>
+                                <button class="btn btn-low-danger btn-sm" @click="cerrarLote(lote)">Cerrar</button>
                             </div>
                         </td>
                     </tr>
@@ -218,6 +219,28 @@ export default {
                     Swal.fire("Error", "Hubo un error al actualizar el lote", "error");
                 });
         },
+        cerrarLote(lote) {
+            Swal.fire({
+                title: "¿Cerrar lote?",
+                text: "No podrás modificarlo después de cerrarlo.",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Sí, cerrar",
+                cancelButtonText: "Cancelar",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    axios
+                        .put(`http://localhost:8080/api/lotes/${lote.codDistribuidora}/${lote.idLote}/cerrar`)
+                        .then(() => {
+                            this.fetchLotes();
+                            Swal.fire("Cerrado", "El lote fue cerrado correctamente", "success");
+                        })
+                        .catch(() => {
+                            Swal.fire("Error", "Hubo un error al cerrar el lote", "error");
+                        });
+                }
+            });
+        },
         eliminarLote(lote) {
             Swal.fire({
                 title: "¿Estás seguro?",
@@ -379,6 +402,17 @@ export default {
 .btn-danger:hover {
     background-color: #ff7979;
     border-color: #ff7979;
+}
+
+.btn-low-danger {
+    border-radius: 25px;
+    background-color: orange;
+    border-color: orange;
+}
+
+.btn-low-danger:hover {
+    background-color: #f3ad44;
+    border-color: #f3ad44;
 }
 
 .modal.show {

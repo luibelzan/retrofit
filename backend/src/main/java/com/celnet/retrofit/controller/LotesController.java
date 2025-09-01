@@ -14,6 +14,7 @@ import org.springframework.core.io.InputStreamResource;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.net.ResponseCache;
 import java.util.Arrays;
 import java.util.List;
 import java.util.HashMap;
@@ -52,7 +53,7 @@ public class LotesController {
     // Obtener todos los lotes
     @GetMapping
     public ResponseEntity<List<TLotes>> getAllLotes() {
-        List<TLotes> lotes = lotesService.getAllLotes();
+        List<TLotes> lotes = lotesService.getOpenedLotes();
         return ResponseEntity.ok(lotes);
     }
 
@@ -74,6 +75,16 @@ public class LotesController {
             TLotes updatedLote = lotesService.updateLote(codDistribuidora, idLote, loteDetalles);
             return ResponseEntity.ok(updatedLote);
         } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(null);
+        }
+    }
+
+    @PutMapping("/{codDistribuidora}/{idLote}/cerrar")
+    public ResponseEntity<TLotes> cerrarLote(@PathVariable String codDistribuidora, @PathVariable Integer idLote) {
+        try {
+            TLotes loteCerrado = lotesService.cerrarLote(codDistribuidora, idLote);
+            return ResponseEntity.ok(loteCerrado);
+        } catch(IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(null);
         }
     }

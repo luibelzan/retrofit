@@ -28,6 +28,9 @@ public class TLotes {
     @Temporal(TemporalType.DATE)
     private Date fecLote;
 
+    @Column(name = "estado_lote")
+    private String estadoLote;
+
     public TLotes() {}
 
     // Getters y setters
@@ -69,5 +72,13 @@ public class TLotes {
 
     public void setFecLote(Date fecLote) {
         this.fecLote = fecLote;
+    }
+
+    public String getEstadoLote() {
+        return estadoLote;
+    }
+
+    public void setEstadoLote(String estadoLote) {
+        this.estadoLote = estadoLote;
     }
 }
