@@ -55,7 +55,7 @@
                             <div class="mb-3">
                                 <label for="distribuidora">Distribuidora</label>
                                 <select id="distribuidora" class="form-select" v-model="nuevoLote.codDistribuidora" 
-                                        @change="cargarAlmacenes" required>
+                                        @change="cargarAlmacenes(nuevoLote.codDistribuidora)" required>
                                     <option v-for="dist in distribuidoras" :key="dist.codDistribuidora" :value="dist.codDistribuidora">
                                         {{ dist.nomDistribuidora }}
                                     </option>
@@ -129,7 +129,11 @@
                             </div>
                             <div class="mb-3">
                                 <label>Código Almacén</label>
-                                <input v-model="loteActual.codAlmacen" class="form-control" required />
+                                <select class="form-select" v-model="loteActual.codAlmacen" required>
+                                    <option v-for="alm in almacenes" :key="alm.codAlmacen" :value="alm.codAlmacen">
+                                        {{ alm.desAlmacen }}
+                                    </option>
+                                </select>
                             </div>
                             <div class="mb-3">
                                 <label>Fecha del Lote</label>
@@ -198,9 +202,7 @@ export default {
                 console.error("Error cargando datos:", error);
             }
         },
-        async cargarAlmacenes() {
-            const { codDistribuidora } = this.nuevoLote;
-            console.log(codDistribuidora);
+        async cargarAlmacenes(codDistribuidora) {
             try {
                 const response = await axios.get(`http://localhost:8080/api/recepcion/almacenes?codDistribuidora=${codDistribuidora}`)
                 this.almacenes = response.data;
@@ -232,9 +234,11 @@ export default {
             this.loteActual = { ...lote };
             this.modalVerVisible = true;
         },
-        abrirModalEditar(lote) {
+        async abrirModalEditar(lote) {
             this.loteActual = { ...lote };
             this.modalEditarVisible = true;
+            // Cargar almacenes para la distribuidora de este lote
+            await this.cargarAlmacenes(this.loteActual.codDistribuidora);
         },
         editarLote() {
             axios
