@@ -215,6 +215,11 @@
                                 <input type="text" id="createDesObservaciones" v-model="newProceso.desObservaciones"
                                     class="form-control" required pattern=".{1,250}" title="Máximo 250 caracteres">
                             </div>
+                            <div class="mb-3">
+                                <label for="createIdLote" class="form-label">Id Lote</label>
+                                <input type="number" id="createDesObservaciones" v-model="newProceso.idLote"
+                                    class="form-control" min="1" title="Numero valido">
+                            </div>
                             <button type="submit" class="btn btn-primary">Crear</button>
                         </form>
                     </div>
