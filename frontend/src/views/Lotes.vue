@@ -53,8 +53,13 @@
                                 <input v-model="nuevoLote.idLote" class="form-control" required />
                             </div>
                             <div class="mb-3">
-                                <label>Código Distribuidora</label>
-                                <input v-model="nuevoLote.codDistribuidora" class="form-control" required />
+                                <label for="distribuidora">Distribuidora</label>
+                                <select id="distribuidora" class="form-select" v-model="nuevoLote.codDistribuidora" 
+                                        @change="cargarAlmacenes" required>
+                                    <option v-for="dist in distribuidoras" :key="dist.codDistribuidora" :value="dist.codDistribuidora">
+                                        {{ dist.nomDistribuidora }}
+                                    </option>
+                                </select>
                             </div>
                             <div class="mb-3">
                                 <label>Nombre del Lote</label>
@@ -62,7 +67,11 @@
                             </div>
                             <div class="mb-3">
                                 <label>Código Almacén</label>
-                                <input v-model="nuevoLote.codAlmacen" class="form-control" required />
+                                <select id="almacen" class="form-select" v-model="nuevoLote.codAlmacen" required>
+                                    <option v-for="dist in almacenes" :key="dist.codAlmacen" :value="dist.codAlmacen">
+                                        {{ dist.desAlmacen }}
+                                    </option>
+                                </select>
                             </div>
                             <div class="mb-3">
                                 <label>Fecha</label>
@@ -145,6 +154,7 @@ export default {
         return {
             lotes: [],
             almacenes: [],
+            distribuidoras: [],
             nuevoLote: {
                 idLote: "",
                 codDistribuidora: "",
@@ -167,6 +177,7 @@ export default {
     mounted() {
         this.fetchLotes();
         this.cargarAlmacenes();
+        this.fetchData();
     },
     methods: {
         fetchLotes() {
@@ -178,6 +189,24 @@ export default {
                 .catch((error) => {
                     console.error("Error al obtener los lotes:", error);
                 });
+        },
+        async fetchData() {
+            try {
+                const resDistribuidoras = await fetch("http://localhost:8080/api/achatarrado/distribuidoras");
+                this.distribuidoras = await resDistribuidoras.json();
+            } catch (error) {
+                console.error("Error cargando datos:", error);
+            }
+        },
+        async cargarAlmacenes() {
+            const { codDistribuidora } = this.nuevoLote;
+            console.log(codDistribuidora);
+            try {
+                const response = await axios.get(`http://localhost:8080/api/recepcion/almacenes?codDistribuidora=${codDistribuidora}`)
+                this.almacenes = response.data;
+            } catch (error) {
+                Swal.fire("Error", "Error al cargar los almacenes.", "error");
+            }
         },
         formatoFecha(fecha) {
             if (!fecha) return "";
@@ -308,16 +337,7 @@ export default {
                 });
         },
 
-        cargarAlmacenes() {
-            axios
-                .get("http://localhost:8080/api/almacenes") 
-                .then((response) => {
-                    this.almacenes = response.data;
-                })
-                .catch((error) => {
-                    Swal.fire("Error", "Error al cargar los almacenes.", "error");
-                });
-        },
+        
 
 
         getAlmacenNombre(codigoAlmacen) {
