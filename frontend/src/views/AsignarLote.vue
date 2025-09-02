@@ -3,6 +3,19 @@
     <h2>Asignar Lote a Contadores</h2>
 
     <form @submit.prevent="asignarLote">
+
+      <div class="mb-3">
+        <label for="codDistribuidora" class="form-label">Distribuidora</label>
+        <select v-model="codDistribuidora" class="form-select" required @change="cargarLotes">
+          <option disabled value="">Seleccione una opción</option>
+          <option value="777">Iberdrola I-DE</option>
+          <option value="888">SAGEMCOM</option>
+          <option value="999">LANDIS&GYR</option>
+          <option value="666">KAIFA</option>
+          <option value="444">Celnet</option>
+        </select>
+      </div>
+
       <div class="mb-3">
         <label for="idLote" class="form-label">Seleccionar Lote:</label>
         <select v-model="idLote" class="form-select" required>
@@ -10,18 +23,6 @@
           <option v-for="lote in lotes" :key="lote.idLote" :value="lote.idLote">
             {{ lote.idLote }}
           </option>
-        </select>
-      </div>
-
-      <div class="mb-3">
-        <label for="codDistribuidora" class="form-label">Distribuidora</label>
-        <select v-model="codDistribuidora" class="form-select" required>
-          <option disabled value="">Seleccione una opción</option>
-          <option value="777">Iberdrola I-DE</option>
-          <option value="888">SAGEMCOM</option>
-          <option value="999">LANDIS&GYR</option>
-          <option value="666">KAIFA</option>
-          <option value="444">Celnet</option>
         </select>
       </div>
 
@@ -66,7 +67,7 @@ export default {
   methods: {
     async cargarLotes() {
       try {
-        const response = await axios.get("http://localhost:8080/api/lotes");
+        const response = await axios.get(`http://localhost:8080/api/lotes/abiertos/${this.codDistribuidora}`);
         this.lotes = response.data;
       } catch (error) {
         this.error = "Error al cargar lotes";

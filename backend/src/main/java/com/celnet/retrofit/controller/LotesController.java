@@ -57,6 +57,17 @@ public class LotesController {
         return ResponseEntity.ok(lotes);
     }
 
+    // Obtener lotes abiertos filtrados por codDistribuidora
+    @GetMapping("/abiertos/{codDistribuidora}")
+    public ResponseEntity<List<TLotes>> getOpenedLotesByDistribuidora(@PathVariable String codDistribuidora) {
+        try {
+            List<TLotes> lotes = lotesService.getOpenedLotesByDistribuidora(codDistribuidora);
+            return ResponseEntity.ok(lotes);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(null);
+        }
+    }
+
     // Obtener un lote por ID compuesto
     @GetMapping("/{codDistribuidora}/{idLote}")
     public ResponseEntity<TLotes> getLoteById(@PathVariable String codDistribuidora, @PathVariable Integer idLote) {

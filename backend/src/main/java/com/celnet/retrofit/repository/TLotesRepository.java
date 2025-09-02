@@ -16,4 +16,7 @@ public interface TLotesRepository extends JpaRepository<TLotes, TLotesId> {
     Optional<TLotes> findByIdLoteAndCodDistribuidora(Integer idLote, String codDistribuidora);
 
     List<TLotes> findByEstadoLote(String estadoLote);
+
+    @Query("SELECT l FROM TLotes l WHERE l.codDistribuidora = :codDistribuidora AND l.estadoLote = 'A'")
+    List<TLotes> findByCodDistribuidoraAndEstado(String codDistribuidora);
 }

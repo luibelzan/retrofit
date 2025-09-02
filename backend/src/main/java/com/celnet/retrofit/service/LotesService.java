@@ -42,6 +42,10 @@ public class LotesService {
         return tLotesRepository.findByEstadoLote("A");
     }
 
+    public List<TLotes> getOpenedLotesByDistribuidora(String codDistribuidora) {
+        return tLotesRepository.findByCodDistribuidoraAndEstado(codDistribuidora);
+    }
+
     // Leer un lote específico por ID compuesto
     public TLotes getLoteById(String codDistribuidora, Integer idLote) {
         TLotesId loteId = new TLotesId(codDistribuidora, idLote);
