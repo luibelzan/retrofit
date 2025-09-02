@@ -99,6 +99,21 @@ export default {
     };
   },
   methods: {
+    playAlarm() {
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = ctx.createOscillator();
+            const gainNode = ctx.createGain();
+
+            oscillator.type = "square"; // tipo de onda
+            oscillator.frequency.setValueAtTime(800, ctx.currentTime); // frecuencia en Hz
+            gainNode.gain.setValueAtTime(0.2, ctx.currentTime); // volumen
+
+            oscillator.connect(gainNode);
+            gainNode.connect(ctx.destination);
+
+            oscillator.start();
+            setTimeout(() => oscillator.stop(), 1000); // dura 1 segundo
+    },
     async fetchData() {
       try {
         const resDistribuidoras = await fetch("http://localhost:8080/api/achatarrado/distribuidoras");
@@ -134,6 +149,7 @@ export default {
             showConfirmButton: false,
           });
         } catch (error) {
+          this.playAlarm();
           Swal.fire({
             icon: "error",
             title: "Error",
