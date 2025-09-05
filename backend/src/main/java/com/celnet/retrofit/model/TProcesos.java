@@ -53,7 +53,7 @@ public class TProcesos {
     @Column(name = "cod_diagnostico")
     private Integer codDiagnostico = 30; // Valor por defecto 30
 
-    @Column(name = "id_lote")
+    @Column(name = "id_lote", nullable=true)
     private Integer idLote;
 
     @Column(name = "fec_proceso")
@@ -73,6 +73,9 @@ public class TProcesos {
 
     @Column(name = "cod_diagnostico2", nullable=true)
     private Integer codDiagnostico2;
+
+    @Column(name = "id_contador_sust", nullable = true)
+    private String idContadorSust;
 
     // Getters y Setters
 
@@ -226,5 +229,13 @@ public class TProcesos {
 
     public void setCodDiagnostico2(Integer codDiagnostico2) {
         this.codDiagnostico2 = codDiagnostico2;
+    }
+
+    public String getIdContadorSust() {
+        return idContadorSust;
+    }
+
+    public void setIdContadorSust(String idContadorSust) {
+        this.idContadorSust = idContadorSust;   
     }
 }

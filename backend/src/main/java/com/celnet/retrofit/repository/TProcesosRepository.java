@@ -11,9 +11,9 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-
 
 @Repository
 public interface TProcesosRepository extends JpaRepository<TProcesos, TProcesosId> {
@@ -67,4 +67,39 @@ public interface TProcesosRepository extends JpaRepository<TProcesos, TProcesosI
                         @Param("tipDiagnostico2") String tipDiagnostico2,
                         @Param("codDiagnostico2") Integer codDiagnostico2,
                         @Param("fecProceso2") LocalDate fecProceso2);
+
+        @Query("SELECT p FROM TProcesos p WHERE p.codDistribuidora = :codDistribuidora AND p.fecRecepcion >= :fechaInicio AND p.fecRecepcion <= :fechaFin")
+        List<TProcesos> getTotalEquipos(
+                        @Param("codDistribuidora") String codDistribuidora,
+                        @Param("fechaInicio") Date fechaInicio,
+                        @Param("fechaFin") Date fechaFin);
+
+        @Query("SELECT p FROM TProcesos p WHERE p.codDistribuidora = :codDistribuidora AND p.fecProceso >= :fechaInicio AND p.fecProceso <= :fechaFin AND tipDiagnostico = 'RP'")
+        List<TProcesos> getRecuperados(
+                        @Param("codDistribuidora") String codDistribuidora,
+                        @Param("fechaInicio") Date fechaInicio,
+                        @Param("fechaFin") Date fechaFin);
+
+        @Query("SELECT p FROM TProcesos p WHERE p.codDistribuidora = :codDistribuidora AND p.fecRecepcion >= :fechaInicio AND p.fecRecepcion <= :fechaFin AND tipDiagnostico = 'CH' AND p.idContadorSust IS NOT NULL")
+        List<TProcesos> getSustituidos(
+                        @Param("codDistribuidora") String codDistribuidora,
+                        @Param("fechaInicio") Date fechaInicio,
+                        @Param("fechaFin") Date fechaFin);
+
+        @Query("SELECT p FROM TProcesos p WHERE p.codDistribuidora = :codDistribuidora AND p.fecRecepcion >= :fechaInicio AND p.fecRecepcion <= :fechaFin AND tipDiagnostico = 'CH' AND p.codDiagnostico = 3")
+        List<TProcesos> getDanoFisico(
+                        @Param("codDistribuidora") String codDistribuidora,
+                        @Param("fechaInicio") Date fechaInicio,
+                        @Param("fechaFin") Date fechaFin);
+
+        @Query("SELECT p FROM TProcesos p WHERE p.codDistribuidora = :codDistribuidora AND p.fecRecepcion >= :fechaInicio AND p.fecRecepcion <= :fechaFin AND tipDiagnostico = 'RC' AND p.codDiagnostico = 30")
+        List<TProcesos> getPendientes(
+                        @Param("codDistribuidora") String codDistribuidora,
+                        @Param("fechaInicio") Date fechaInicio,
+                        @Param("fechaFin") Date fechaFin);
+
+        
+
+                        
+
 }

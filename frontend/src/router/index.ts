@@ -14,6 +14,7 @@ import Proceso from '@/views/Proceso.vue'
 import General from '@/views/General.vue'
 import Lotes from '@/views/Lotes.vue'
 import AsignarLote from '@/views/AsignarLote.vue'
+import Reportes from '@/views/Reportes.vue'
 
 const routes = [
   {
@@ -90,6 +91,11 @@ const routes = [
     path: '/asignar',
     name: 'AsignarLote',
     component: AsignarLote,
+  },
+  {
+    path: '/reportes',
+    name: 'Reportes',
+    component: Reportes,
   },
 ]
 
