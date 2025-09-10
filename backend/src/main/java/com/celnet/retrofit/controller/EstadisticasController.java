@@ -49,8 +49,9 @@ public class EstadisticasController {
     }
 
     @GetMapping("/tasa-enviados")
-    public ResponseEntity<List<TasaEnvioAlmacen>> getTasaEnvioAlmacen(@RequestParam String codDistribuidora) {
-        return ResponseEntity.ok(estadisticasService.getTasaEnvioAlmacen(codDistribuidora));
+    public ResponseEntity<List<TasaEnvioAlmacen>> getTasaEnvioAlmacen(@RequestParam String codDistribuidora, 
+        @RequestParam @DateTimeFormat( iso = DateTimeFormat.ISO.DATE) Date fechaProceso) {
+        return ResponseEntity.ok(estadisticasService.getTasaEnvioAlmacen(codDistribuidora, fechaProceso));
     }
     
     

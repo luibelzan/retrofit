@@ -153,12 +153,61 @@
         <!-- Paginación -->
         <div class="d-flex justify-content-center mt-3">
           <button class="btn btn-primary" :disabled="currentPageLotes === 1"
-            @click="changePage(currentPageLotes - 1)">Anterior</button>
+            @click="changePageLotes(currentPageLotes - 1)">Anterior</button>
           <span class="mx-3">Página {{ currentPageLotes }} de {{ totalPagesLotes }}</span>
           <button class="btn btn-primary" :disabled="currentPageLotes === totalPagesLotes"
-            @click="changePage(currentPageLotes + 1)">Siguiente</button>
+            @click="changePageLotes(currentPageLotes + 1)">Siguiente</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EQUIPOS PENDIENTES DE SUSTITUCION -->
+  <div class="container mt-3 border rounded" v-if="mostrar">
+    <div class="p-4 rounded">
+      <div class="form-group mb-3">
+        <h3 class="text-center">Tasa de envio a almacen</h3>
+        <div class="table-responsive">
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th>
+                  Cod Almacen
+                </th>
+                <th>
+                  Nombre Almacen
+                </th>
+                <th>
+                  Contadores Recibidos
+                </th>
+                <th>
+                  Contadores Enviados
+                </th>
+                <th>
+                  Tasa
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="envio in paginatedEnvios" :key="`${envio.codAlmacen}`">
+                <td>{{ envio.codigoAlmacen }}</td>
+                <td>{{ envio.nombreAlmacen }}</td>
+                <td>{{ envio.contadoresRecibidos }}</td>
+                <td>{{ envio.contadoresEnviados }}</td>
+                <td>{{ envio.tasa.toFixed(2) }}</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
 
+        <!-- Paginación -->
+        <div class="d-flex justify-content-center mt-3">
+          <button class="btn btn-primary" :disabled="currentPageEnvios === 1"
+            @click="changePageEnvios(currentPageEnvios - 1)">Anterior</button>
+          <span class="mx-3">Página {{ currentPageEnvios }} de {{ totalPagesEnvios }}</span>
+          <button class="btn btn-primary" :disabled="currentPageEnvios === totalPagesEnvios"
+            @click="changePageEnvios(currentPageEnvios + 1)">Siguiente</button>
+        </div>
       </div>
     </div>
   </div>
@@ -195,9 +244,11 @@ export default {
       currentPage: 1,
       pageSize: 10, // cantidad de filas por página
       currentPageLotes: 1,
+      currentPageEnvios: 1,
       equiposPendientesData: null,
       achatarradosChart: null,
       contadoresEnviadosPorLoteData: null,
+      tasaEnvioData: null,
       achatarradosData: [],
       chartOptions: {
         responsive: true,
@@ -232,9 +283,19 @@ export default {
       const end = start + this.pageSize;
       return this.contadoresEnviadosPorLoteData.slice(start, end);
     },
+    paginatedEnvios() {
+      if (!this.tasaEnvioData) return [];
+      const start = (this.currentPageEnvios - 1) * this.pageSize;
+      const end = start + this.pageSize;
+      return this.tasaEnvioData.slice(start, end);
+    },
     totalPagesLotes() {
       if (!this.contadoresEnviadosPorLoteData) return 1;
       return Math.ceil(this.contadoresEnviadosPorLoteData.length / this.pageSize);
+    },
+    totalPagesEnvios() {
+      if (!this.tasaEnvioData) return 1;
+      return Math.ceil(this.tasaEnvioData.length / this.pageSize);
     },
     totalPages() {
       if (!this.equiposPendientesData) return 1;
@@ -301,10 +362,33 @@ export default {
         console.error("Error al cargar los datos de los contadores enviados por lotes: ", error);
       }
     },
+    async loadTasaEnvio() {
+      try {
+        const response = await axios.get("http://localhost:8080/api/estadisticas/tasa-enviados", {
+          params: {
+            codDistribuidora: this.formData.codDistribuidora,
+            fechaProceso: this.formData.fechaProceso,
+          },
+        });
+        const data = response.data;
+        this.tasaEnvioData = data;
+        this.mostrar = true;
+      } catch (error) {
+        console.error("Error al cargar los datos de la tasa de envio: ", error);
+      }
+    },
     changePage(page) {
             if (page < 1 || page > this.totalPages) return;
             this.currentPage = page;
         },
+    changePageLotes(page) {
+      if (page < 1 || page > this.totalPagesLotes) return;
+      this.currentPageLotes = page;
+    },
+    changePageEnvios(page) {
+      if (page < 1 || page > this.totalPagesEnvios) return;
+      this.currentPageEnvios = page;
+    },
     async fetchData() {
             try {
                 const resDistribuidoras = await fetch("http://localhost:8080/api/achatarrado/distribuidoras");
@@ -317,6 +401,7 @@ export default {
         this.loadAchatarrados();
         this.loadEquiposPendientesSustitucion();
         this.loadContadoresEnviadosPorLote();
+        this.loadTasaEnvio();
       }
   },
 };

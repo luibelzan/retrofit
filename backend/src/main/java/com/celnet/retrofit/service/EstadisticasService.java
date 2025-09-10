@@ -30,8 +30,8 @@ public class EstadisticasService {
         return estadisticasRepository.findEnviadosPorLote(codDistribuidora, fechaInicio);
     }
 
-    public List<TasaEnvioAlmacen> getTasaEnvioAlmacen(String codDistribuidora) {
-        return estadisticasRepository.findTasaEnvioAlmacen(codDistribuidora);
+    public List<TasaEnvioAlmacen> getTasaEnvioAlmacen(String codDistribuidora, Date fechaInicio) {
+        return estadisticasRepository.findTasaEnvioAlmacen(codDistribuidora, fechaInicio);
     }
     
 }

@@ -107,6 +107,7 @@ public interface EstadisticasRepository extends JpaRepository<TProcesos, TProces
             FROM t_proceso tp
             WHERE tp.cod_distribuidora = :codDistribuidora
               AND tp.cod_almacen = almacenes.cod_almacen
+              AND tp.fec_proceso >= :fecProceso
             GROUP BY tp.cod_almacen
         ) AS recibidos ON TRUE
         LEFT JOIN LATERAL (
@@ -122,6 +123,6 @@ public interface EstadisticasRepository extends JpaRepository<TProcesos, TProces
         WHERE almacenes.cod_distribuidora = :codDistribuidora
         ORDER BY tasa, nombreAlmacen
         """, nativeQuery = true)
-    List<TasaEnvioAlmacen> findTasaEnvioAlmacen(@Param("codDistribuidora") String codDistribuidora);
+    List<TasaEnvioAlmacen> findTasaEnvioAlmacen(@Param("codDistribuidora") String codDistribuidora, @Param("fecProceso") Date fecProceso);
 
 }
