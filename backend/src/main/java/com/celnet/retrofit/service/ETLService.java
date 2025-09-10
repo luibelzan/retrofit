@@ -47,7 +47,7 @@ public class ETLService {
         String tipoFormato;
         if ("777".equals(codDistribuidora)) {
             tipoFormato = "Retrofit";
-        } else if ("888".equals(codDistribuidora) || "999".equals(codDistribuidora)) {
+        } else if ("888".equals(codDistribuidora) || "999".equals(codDistribuidora) || "555".equals(codDistribuidora)) {
             tipoFormato = "Garantia";
         } else {
             throw new IllegalArgumentException("Código de distribuidora no válido: " + codDistribuidora);

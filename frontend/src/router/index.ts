@@ -15,6 +15,7 @@ import General from '@/views/General.vue'
 import Lotes from '@/views/Lotes.vue'
 import AsignarLote from '@/views/AsignarLote.vue'
 import Reportes from '@/views/Reportes.vue'
+import Estadisticas from '@/views/Estadisticas.vue'
 
 const routes = [
   {
@@ -96,6 +97,11 @@ const routes = [
     path: '/reportes',
     name: 'Reportes',
     component: Reportes,
+  },
+  {
+    path: '/estadisticas',
+    name: 'Estadisticas',
+    component: Estadisticas,
   },
 ]
 

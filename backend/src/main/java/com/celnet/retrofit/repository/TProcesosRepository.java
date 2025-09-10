@@ -1,5 +1,6 @@
 package com.celnet.retrofit.repository;
 
+import com.celnet.retrofit.dto.EquipoGarantiaPendienteSustitucion;
 import com.celnet.retrofit.model.TProcesos;
 import com.celnet.retrofit.model.id.TProcesosId;
 import jakarta.transaction.Transactional;
@@ -97,9 +98,5 @@ public interface TProcesosRepository extends JpaRepository<TProcesos, TProcesosI
                         @Param("codDistribuidora") String codDistribuidora,
                         @Param("fechaInicio") Date fechaInicio,
                         @Param("fechaFin") Date fechaFin);
-
-        
-
-                        
 
 }
