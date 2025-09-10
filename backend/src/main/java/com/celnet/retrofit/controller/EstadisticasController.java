@@ -43,8 +43,9 @@ public class EstadisticasController {
     }
 
     @GetMapping("/enviados-lote")
-    public ResponseEntity<List<ContadoresEnviadosPorLote>> getEnviadosPorLote(@RequestParam String codDistribuidora) {
-        return ResponseEntity.ok(estadisticasService.getContadoresEnviadosPorLotes(codDistribuidora));
+    public ResponseEntity<List<ContadoresEnviadosPorLote>> getEnviadosPorLote(@RequestParam String codDistribuidora, 
+        @RequestParam @DateTimeFormat( iso = DateTimeFormat.ISO.DATE) Date fechaProceso) {
+        return ResponseEntity.ok(estadisticasService.getContadoresEnviadosPorLotes(codDistribuidora, fechaProceso));
     }
 
     @GetMapping("/tasa-enviados")

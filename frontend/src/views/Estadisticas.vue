@@ -1,6 +1,7 @@
 <template>
+  <h1 class="text-center font-extrabold">Estadisticas</h1>
   <!-- FILTRO -->
-  <div class="container mt-3 border">
+  <div class="container mt-3 border rounded">
     <div class="p-4 rounded">
       <div class="form-group mb-3">
         <label for="distribuidora">Distribuidora</label>
@@ -24,7 +25,7 @@
 
 
   <!-- CONTADORES ACHATARRADOS -->
-  <div class="container mt-3 border" v-if="mostrar">
+  <div class="container mt-3 border rounded" v-if="mostrar">
     <div class="p-4 rounded">
       <div class="form-group mb-3">
         <h3 class="text-center">Contadores Achatarrados por Fallo</h3>
@@ -51,7 +52,7 @@
 
 
   <!-- EQUIPOS PENDIENTES DE SUSTITUCION -->
-  <div class="container mt-3 border" v-if="mostrar">
+  <div class="container mt-3 border rounded" v-if="mostrar">
     <div class="p-4 rounded">
       <div class="form-group mb-3">
         <h3 class="text-center">Equipos en garantia pendientes de sustitucion</h3>
@@ -99,7 +100,6 @@
             </tbody>
           </table>
         </div>
-
         <!-- Paginación -->
         <div class="d-flex justify-content-center mt-3">
           <button class="btn btn-primary" :disabled="currentPage === 1"
@@ -107,6 +107,56 @@
           <span class="mx-3">Página {{ currentPage }} de {{ totalPages }}</span>
           <button class="btn btn-primary" :disabled="currentPage === totalPages"
             @click="changePage(currentPage + 1)">Siguiente</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EQUIPOS PENDIENTES DE SUSTITUCION -->
+  <div class="container mt-3 border rounded" v-if="mostrar">
+    <div class="p-4 rounded">
+      <div class="form-group mb-3">
+        <h3 class="text-center">Contadores enviados por lotes</h3>
+        <div class="table-responsive">
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th>
+                  Id Lote
+                </th>
+                <th>
+                  Nombre Lote
+                </th>
+                <th>
+                  Des Almacen
+                </th>
+                <th>
+                  Cod Almacen
+                </th>
+                <th>
+                  Numero Equipos
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="lote in paginatedLotes" :key="`${lote.idLote}`">
+                <td>{{ lote.idLote }}</td>
+                <td>{{ lote.nomLote }}</td>
+                <td>{{ lote.desAlmacen }}</td>
+                <td>{{ lote.codAlmacen }}</td>
+                <td>{{ lote.cantidad }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Paginación -->
+        <div class="d-flex justify-content-center mt-3">
+          <button class="btn btn-primary" :disabled="currentPageLotes === 1"
+            @click="changePage(currentPageLotes - 1)">Anterior</button>
+          <span class="mx-3">Página {{ currentPageLotes }} de {{ totalPagesLotes }}</span>
+          <button class="btn btn-primary" :disabled="currentPageLotes === totalPagesLotes"
+            @click="changePage(currentPageLotes + 1)">Siguiente</button>
         </div>
 
       </div>
@@ -144,8 +194,10 @@ export default {
       mostrar: false,
       currentPage: 1,
       pageSize: 10, // cantidad de filas por página
+      currentPageLotes: 1,
       equiposPendientesData: null,
       achatarradosChart: null,
+      contadoresEnviadosPorLoteData: null,
       achatarradosData: [],
       chartOptions: {
         responsive: true,
@@ -173,6 +225,16 @@ export default {
       const start = (this.currentPage - 1) * this.pageSize;
       const end = start + this.pageSize;
       return this.equiposPendientesData.slice(start, end);
+    },
+    paginatedLotes() {
+      if (!this.contadoresEnviadosPorLoteData) return [];
+      const start = (this.currentPageLotes - 1) * this.pageSize;
+      const end = start + this.pageSize;
+      return this.contadoresEnviadosPorLoteData.slice(start, end);
+    },
+    totalPagesLotes() {
+      if (!this.contadoresEnviadosPorLoteData) return 1;
+      return Math.ceil(this.contadoresEnviadosPorLoteData.length / this.pageSize);
     },
     totalPages() {
       if (!this.equiposPendientesData) return 1;
@@ -224,6 +286,21 @@ export default {
         console.error("Error al cargar los datos de los equipos pendientes de sustitucion: ", error);
       }
     },
+    async loadContadoresEnviadosPorLote() {
+      try {
+        const response = await axios.get("http://localhost:8080/api/estadisticas/enviados-lote", {
+          params: {
+            codDistribuidora: this.formData.codDistribuidora,
+            fechaProceso: this.formData.fechaProceso,
+          },
+        });
+        const data = response.data;
+        this.contadoresEnviadosPorLoteData = data;
+        this.mostrar = true;
+      } catch(error) {
+        console.error("Error al cargar los datos de los contadores enviados por lotes: ", error);
+      }
+    },
     changePage(page) {
             if (page < 1 || page > this.totalPages) return;
             this.currentPage = page;
@@ -239,6 +316,7 @@ export default {
       async loadStatistics() {
         this.loadAchatarrados();
         this.loadEquiposPendientesSustitucion();
+        this.loadContadoresEnviadosPorLote();
       }
   },
 };

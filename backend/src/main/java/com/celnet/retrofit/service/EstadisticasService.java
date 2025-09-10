@@ -26,8 +26,8 @@ public class EstadisticasService {
         return estadisticasRepository.findAchatarradosPorFallo(codDistribuidora, fechaInicio);
     }
 
-    public List<ContadoresEnviadosPorLote> getContadoresEnviadosPorLotes(String codDistribuidora) {
-        return estadisticasRepository.findEnviadosPorLote(codDistribuidora);
+    public List<ContadoresEnviadosPorLote> getContadoresEnviadosPorLotes(String codDistribuidora, Date fechaInicio) {
+        return estadisticasRepository.findEnviadosPorLote(codDistribuidora, fechaInicio);
     }
 
     public List<TasaEnvioAlmacen> getTasaEnvioAlmacen(String codDistribuidora) {

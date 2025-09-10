@@ -76,7 +76,8 @@ public interface EstadisticasRepository extends JpaRepository<TProcesos, TProces
                 tl.nom_lote AS nomLote,
                 tl.cod_almacen AS codAlmacen,
                 a.des_almacen AS desAlmacen,
-                COUNT(tp.id_lote) AS cantidad
+                COUNT(tp.id_lote) AS cantidad,
+                tl.fec_lote as fecLote
             FROM t_lotes tl
             JOIN t_proceso tp
               ON tl.cod_distribuidora = tp.cod_distribuidora
@@ -85,10 +86,11 @@ public interface EstadisticasRepository extends JpaRepository<TProcesos, TProces
               ON tl.cod_distribuidora = a.cod_distribuidora
              AND tl.cod_almacen = a.cod_almacen
             WHERE tl.cod_distribuidora = :codDistribuidora
-            GROUP BY tl.id_lote, tl.nom_lote, tl.cod_almacen, a.des_almacen
+            AND tl.fec_lote >= :fecProceso
+            GROUP BY tl.id_lote, tl.nom_lote, tl.cod_almacen, a.des_almacen, tl.fec_lote
             ORDER BY tl.id_lote, a.des_almacen
             """, nativeQuery = true)
-    List<ContadoresEnviadosPorLote> findEnviadosPorLote(@Param("codDistribuidora") String codDistribuidora);
+    List<ContadoresEnviadosPorLote> findEnviadosPorLote(@Param("codDistribuidora") String codDistribuidora, @Param("fecProceso") Date fecProceso);
 
     @Query(value = """
         SELECT 
