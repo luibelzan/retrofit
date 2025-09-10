@@ -31,9 +31,9 @@ public class EstadisticasController {
     @GetMapping("/equipos-garantia")
     public ResponseEntity<List<EquipoGarantiaPendienteSustitucion>> getEquiposGarantia(
         @RequestParam String codDistribuidora,
-        @RequestParam @DateTimeFormat( iso = DateTimeFormat.ISO.DATE) Date fechaInicio) {
+        @RequestParam @DateTimeFormat( iso = DateTimeFormat.ISO.DATE) Date fechaProceso) {
             
-            return ResponseEntity.ok(estadisticasService.getEquiposGarantia(codDistribuidora, fechaInicio));
+            return ResponseEntity.ok(estadisticasService.getEquiposGarantia(codDistribuidora, fechaProceso));
         }
 
     @GetMapping("/achatarrados-fallo")
