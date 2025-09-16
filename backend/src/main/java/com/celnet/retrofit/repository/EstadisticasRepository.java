@@ -107,17 +107,17 @@ public interface EstadisticasRepository extends JpaRepository<TProcesos, TProces
             FROM t_proceso tp
             WHERE tp.cod_distribuidora = :codDistribuidora
               AND tp.cod_almacen = almacenes.cod_almacen
-              AND tp.fec_proceso >= :fecProceso
             GROUP BY tp.cod_almacen
         ) AS recibidos ON TRUE
         LEFT JOIN LATERAL (
-            SELECT tl.cod_almacen, COUNT(tp_lote.id_contador) AS total_enviados
+            SELECT tl.cod_almacen, COUNT(DISTINCT tp_lote.id_contador) AS total_enviados
             FROM t_lotes tl
             JOIN t_proceso tp_lote 
               ON tl.cod_distribuidora = tp_lote.cod_distribuidora
              AND tl.id_lote = tp_lote.id_lote
             WHERE tl.cod_distribuidora = :codDistribuidora
               AND tl.cod_almacen = almacenes.cod_almacen
+              AND tl.fec_lote >= :fecProceso
             GROUP BY tl.cod_almacen
         ) AS enviados ON TRUE
         WHERE almacenes.cod_distribuidora = :codDistribuidora

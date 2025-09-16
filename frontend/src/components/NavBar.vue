@@ -41,6 +41,9 @@
               <li>
                 <a class="dropdown-item" @click="navigate('/achatarrado')">Chatarra</a>
               </li>
+              <li>
+                <a class="dropdown-item" @click="navigate('/sustituciones')">Sustituciones</a>
+              </li>
             </ul>
           </li>
 
@@ -76,6 +79,46 @@
               </li>
             </ul>
           </li>
+          <!-- Dropdown para Reportes -->
+          <li class="nav-item dropdown" @click="toggleReportesDropdown($event)">
+            <a class="nav-link dropdown-toggle" href="#" role="button" aria-expanded="false">
+              Reportes
+            </a>
+            <ul class="dropdown-menu" :class="{ show: reportesDropdownAbierto }">
+              <li>
+                <a class="dropdown-item" @click="navigate('/')">Reporte de Facturacion</a>
+              </li>
+              <li>
+                <a class="dropdown-item" @click="navigate('/reportes-landis')">Reporte de Landis&Gyr</a>
+              </li>
+              <li>
+                <a class="dropdown-item" @click="navigate('/')">Reporte de Kaifa</a>
+              </li>
+              <li>
+                <a class="dropdown-item" @click="navigate('/')">Reporte de Recepcion de Equipos</a>
+              </li>
+              <li>
+                <a class="dropdown-item" @click="navigate('/')">Reporte de Equipos Recuperados</a>
+              </li>
+              <li>
+                <a class="dropdown-item" @click="navigate('/')">Reporte de Equipos Achatarrados</a>
+              </li>
+            </ul>
+          </li>
+          <!-- Dropdown para Estadisticas -->
+          <li class="nav-item dropdown" @click="toggleEstadisticasDropdown($event)">
+            <a class="nav-link dropdown-toggle" href="#" role="button" aria-expanded="false">
+              Estadisticas
+            </a>
+            <ul class="dropdown-menu" :class="{ show: estadisticasDropdownAbierto }">
+              <li>
+                <a class="dropdown-item" @click="navigate('/achatarrados-fallo')">Achatarrados por Fallo</a>
+              </li>
+              <li>
+                <a class="dropdown-item" @click="navigate('/enviados-lotes')">Enviados por Lotes</a>
+              </li>
+            </ul>
+          </li>
           <li class="nav-item">
             <router-link class="nav-link" to="/lotes">Lotes</router-link>
           </li>
@@ -97,6 +140,8 @@ export default {
       dropdownAbierto: false,
       excelRecepcionDropdownAbierto: false,
       recuperadosChatarraDropdownAbierto: false,
+      reportesDropdownAbierto: false,
+      estadisticasDropdownAbierto: false,
     };
   },
   methods: {
@@ -108,6 +153,8 @@ export default {
       // Cerrar otros dropdowns si están abiertos
       this.excelRecepcionDropdownAbierto = false;
       this.recuperadosChatarraDropdownAbierto = false;
+      this.reportesDropdownAbierto = false;
+      this.estadisticasDropdownAbierto = false;
       event.stopPropagation(); // Evita que el clic se propague
     },
     toggleExcelRecepcionDropdown(event) {
@@ -115,6 +162,8 @@ export default {
       // Cerrar otros dropdowns si están abiertos
       this.dropdownAbierto = false;
       this.recuperadosChatarraDropdownAbierto = false;
+      this.reportesDropdownAbierto = false;
+      this.estadisticasDropdownAbierto = false;
       event.stopPropagation(); // Evita que el clic se propague
     },
     toggleRecuperadosChatarraDropdown(event) {
@@ -122,7 +171,25 @@ export default {
       // Cerrar otros dropdowns si están abiertos
       this.dropdownAbierto = false;
       this.excelRecepcionDropdownAbierto = false;
+      this.reportesDropdownAbierto = false;
+      this.estadisticasDropdownAbierto = false;
       event.stopPropagation(); // Evita que el clic se propague
+    },
+    toggleReportesDropdown(event) {
+      this.reportesDropdownAbierto = !this.reportesDropdownAbierto;
+      this.dropdownAbierto = false;
+      this.excelRecepcionDropdownAbierto = false;
+      this.recuperadosChatarraDropdownAbierto = false;
+      this.estadisticasDropdownAbierto = false;
+      event.stopPropagation();
+    },
+    toggleEstadisticasDropdown(event) {
+      this.estadisticasDropdownAbierto = !this.estadisticasDropdownAbierto;
+      this.reportesDropdownAbierto = false;
+      this.dropdownAbierto = false;
+      this.excelRecepcionDropdownAbierto = false;
+      this.recuperadosChatarraDropdownAbierto = false;
+      event.stopPropagation();
     },
     navigate(route) {
       this.excelRecepcionDropdownAbierto = false;

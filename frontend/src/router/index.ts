@@ -14,8 +14,11 @@ import Proceso from '@/views/Proceso.vue'
 import General from '@/views/General.vue'
 import Lotes from '@/views/Lotes.vue'
 import AsignarLote from '@/views/AsignarLote.vue'
-import Reportes from '@/views/Reportes.vue'
+import ReportesLandis from '@/views/ReportesLandis.vue'
 import Estadisticas from '@/views/Estadisticas.vue'
+import Enviados from '@/views/Enviados.vue'
+import AchatarradosFallo from '@/views/AchatarradosFallo.vue'
+import Sustituciones from '@/views/Sustituciones.vue'
 
 const routes = [
   {
@@ -94,14 +97,29 @@ const routes = [
     component: AsignarLote,
   },
   {
-    path: '/reportes',
+    path: '/reportes-landis',
     name: 'Reportes',
-    component: Reportes,
+    component: ReportesLandis,
+  },
+  {
+    path: '/enviados-lotes',
+    name: 'EnviadosLotes',
+    component: Enviados,
+  },
+  {
+    path: '/achatarrados-fallo',
+    name: 'AchatarradosFallo',
+    component: AchatarradosFallo,
   },
   {
     path: '/estadisticas',
     name: 'Estadisticas',
     component: Estadisticas,
+  },
+  {
+    path: '/sustituciones',
+    name: 'Sustituciones',
+    component: Sustituciones,
   },
 ]
 

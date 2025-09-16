@@ -63,7 +63,7 @@ export default {
                 return;
             }
             try {
-                const response = await axios.get("http://localhost:8080/api/reportes/excel", {
+                const response = await axios.get("http://localhost:8080/api/reportes/landis/excel", {
                     params: {
                         codDistribuidora: this.formData.codDistribuidora,
                         fechaInicio: this.formData.fechaInicio,

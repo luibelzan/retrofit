@@ -26,7 +26,7 @@ public class ReportesController {
     @Autowired
     private ReportesService reportesService;
 
-    @GetMapping("/excel")
+    @GetMapping("/landis/excel")
     public ResponseEntity<InputStreamResource> generarReporteExcel(
         @RequestParam String codDistribuidora,
         @RequestParam @DateTimeFormat( iso = DateTimeFormat.ISO.DATE) Date fechaInicio,
