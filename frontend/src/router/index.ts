@@ -21,6 +21,7 @@ import AchatarradosFallo from '@/views/AchatarradosFallo.vue'
 import Sustituciones from '@/views/Sustituciones.vue'
 import ReportesRecepcion from '@/views/ReportesRecepcion.vue'
 import ReportesRecuperados from '@/views/ReportesRecuperados.vue'
+import ReportesAchatarrados from '@/views/ReportesAchatarrados.vue'
 
 const routes = [
   {
@@ -127,6 +128,16 @@ const routes = [
     path: '/reportes-recuperados',
     name: 'ReportesRecuperados',
     component: ReportesRecuperados,
+  },
+  {
+    path: '/reportes-achatarrados',
+    name: 'ReportesAchatarrados',
+    component: ReportesAchatarrados,
+  },
+  {
+    path: '/estadisticas',
+    name: 'Estadisticas',
+    component: Estadisticas,
   },
 ]
 

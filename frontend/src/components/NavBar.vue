@@ -101,7 +101,7 @@
                 <a class="dropdown-item" @click="navigate('/reportes-recuperados')">Reporte de Equipos Recuperados</a>
               </li>
               <li>
-                <a class="dropdown-item" @click="navigate('/')">Reporte de Equipos Achatarrados</a>
+                <a class="dropdown-item" @click="navigate('/reportes-achatarrados')">Reporte de Equipos Achatarrados</a>
               </li>
             </ul>
           </li>

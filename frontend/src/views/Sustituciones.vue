@@ -74,14 +74,26 @@
             </tbody>
           </table>
         </div>
-        <!-- Paginación -->
-        <div class="d-flex justify-content-center mt-3">
-          <button class="btn btn-primary" :disabled="currentPage === 1"
-            @click="changePage(currentPage - 1)">Anterior</button>
-          <span class="mx-3">Página {{ currentPage }} de {{ totalPages }}</span>
-          <button class="btn btn-primary" :disabled="currentPage === totalPages"
-            @click="changePage(currentPage + 1)">Siguiente</button>
+
+        <div class="d-flex justify-content-between align-items-center mt-3">
+          <!-- Espacio vacío para "empujar" la paginación al centro -->
+          <div style="flex: 1;"></div>
+
+          <!-- Controles de paginación centrados -->
+          <div class="d-flex justify-content-center" style="flex: 1;">
+            <button class="btn btn-primary" :disabled="currentPage === 1"
+              @click="changePage(currentPage - 1)">Anterior</button>
+            <span class="mx-3">Página {{ currentPage }} de {{ totalPages }}</span>
+            <button class="btn btn-primary" :disabled="currentPage === totalPages"
+              @click="changePage(currentPage + 1)">Siguiente</button>
+          </div>
+
+          <!-- Botón exportar a la derecha -->
+          <div style="flex: 1; display: flex; justify-content: flex-end;">
+            <button class="btn btn-success" @click="exportarExcel">Exportar a Excel</button>
+          </div>
         </div>
+
       </div>
     </div>
   </div>
@@ -92,6 +104,7 @@
 <script>
 
 import axios from "axios";
+import * as XLSX from "xlsx";
 
 export default {
   data() {
@@ -153,7 +166,24 @@ export default {
         },
       async loadStatistics() {
         this.loadEquiposPendientesSustitucion();
+      },
+
+    exportarExcel() {
+      if (!this.equiposPendientesData || this.equiposPendientesData.length === 0) {
+        alert("No hay datos para exportar");
+        return;
       }
+
+      // Convertir los datos JSON a hoja de Excel
+      const ws = XLSX.utils.json_to_sheet(this.equiposPendientesData);
+
+      // Crear libro de Excel
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Equipos Pendientes");
+
+      // Guardar archivo
+      XLSX.writeFile(wb, "pendientes_sustitucion.xlsx");
+    }
   },
 };
 

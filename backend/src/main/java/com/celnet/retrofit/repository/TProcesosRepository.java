@@ -2,6 +2,7 @@ package com.celnet.retrofit.repository;
 
 import com.celnet.retrofit.dto.EquipoGarantiaPendienteSustitucion;
 import com.celnet.retrofit.dto.ReporteRecuperado;
+import com.celnet.retrofit.dto.ReporteAchatarrado;
 import com.celnet.retrofit.model.TProcesos;
 import com.celnet.retrofit.model.id.TProcesosId;
 import jakarta.transaction.Transactional;
@@ -118,6 +119,23 @@ public interface TProcesosRepository extends JpaRepository<TProcesos, TProcesosI
           AND p.fec_proceso2 >= :fechaInicio
         """, nativeQuery = true)
         List<ReporteRecuperado> getReporteRecuperados(
+                        @Param("codDistribuidora") String codDistribuidora,
+                        @Param("fechaInicio") Date fechaInicio);
+
+        @Query(value = """
+        SELECT t_proceso.id_contador as idContador,
+          tip_diagnostico2 as tipDiagnostico2,
+          'N' as n,
+          cod_diagnostico_ib as codDiagnosticoIb,
+          des_diagnostico_ib as desDiagnosticoIb,
+          TO_CHAR(fec_proceso2, 'DD-MM-YYYY') AS fecha_formateada
+        from t_proceso,t_diagnostico
+        where t_proceso.cod_distribuidora = :codDistribuidora and
+              t_proceso.tip_diagnostico2 = 'CH' and
+              t_proceso.cod_diagnostico = t_diagnostico.cod_diagnostico  and
+            t_proceso.fec_proceso2 >= :fechaInicio
+        """, nativeQuery = true)
+        List<ReporteAchatarrado> getReporteAchatarrados(
                         @Param("codDistribuidora") String codDistribuidora,
                         @Param("fechaInicio") Date fechaInicio);
 

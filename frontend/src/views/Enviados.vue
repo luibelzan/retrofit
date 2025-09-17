@@ -63,13 +63,23 @@
         </div>
 
         <!-- Paginación -->
-        <div class="d-flex justify-content-center mt-3">
-          <button class="btn btn-primary" :disabled="currentPageLotes === 1"
-            @click="changePageLotes(currentPageLotes - 1)">Anterior</button>
-          <span class="mx-3">Página {{ currentPageLotes }} de {{ totalPagesLotes }}</span>
-          <button class="btn btn-primary" :disabled="currentPageLotes === totalPagesLotes"
-            @click="changePageLotes(currentPageLotes + 1)">Siguiente</button>
+        <div class="d-flex justify-content-between align-items-center mt-3">
+          <!-- Espacio vacío para "empujar" la paginación al centro -->
+          <div style="flex: 1;"></div>
+          <div class="d-flex justify-content-center mt-3">
+            <button class="btn btn-primary" :disabled="currentPageLotes === 1"
+              @click="changePageLotes(currentPageLotes - 1)">Anterior</button>
+            <span class="mx-3">Página {{ currentPageLotes }} de {{ totalPagesLotes }}</span>
+            <button class="btn btn-primary" :disabled="currentPageLotes === totalPagesLotes"
+              @click="changePageLotes(currentPageLotes + 1)">Siguiente</button>
+          </div>
+
+          <!-- Botón exportar a la derecha -->
+          <div style="flex: 1; display: flex; justify-content: flex-end;">
+            <button class="btn btn-success" @click="exportarExcel">Exportar a Excel</button>
+          </div>
         </div>
+
       </div>
     </div>
   </div>
@@ -78,6 +88,7 @@
 
 <script>
 import axios from "axios";
+import * as XLSX from "xlsx";
 
 export default {
   data() {
@@ -144,7 +155,24 @@ export default {
         },
       async loadStatistics() {
         this.loadContadoresEnviadosPorLote();
+      },
+
+    exportarExcel() {
+      if (!this.contadoresEnviadosPorLoteData || this.contadoresEnviadosPorLoteData.length === 0) {
+        alert("No hay datos para exportar");
+        return;
       }
+
+      // Convertir los datos JSON a hoja de Excel
+      const ws = XLSX.utils.json_to_sheet(this.contadoresEnviadosPorLoteData);
+
+      // Crear libro de Excel
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Enviados por Lotes");
+
+      // Guardar archivo
+      XLSX.writeFile(wb, "enviados_lotes.xlsx");
+    }
   },
 };
 

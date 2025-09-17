@@ -22,6 +22,7 @@
     </div>
 </template>
 
+
 <script>
 import axios from "axios";
 import Swal from "sweetalert2";
@@ -56,7 +57,7 @@ export default {
                 return;
             }
             try {
-                const response = await axios.get("http://localhost:8080/api/reportes/recuperados", {
+                const response = await axios.get("http://localhost:8080/api/reportes/achatarrados", {
                     params: {
                         codDistribuidora: this.formData.codDistribuidora,
                         fechaInicio: this.formData.fechaInicio,

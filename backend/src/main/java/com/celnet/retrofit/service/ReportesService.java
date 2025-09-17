@@ -22,7 +22,9 @@ import com.celnet.retrofit.model.TProcesos;
 import com.celnet.retrofit.model.TSustituciones;
 import com.celnet.retrofit.repository.TProcesosRepository;
 import com.celnet.retrofit.repository.TSustitucionesRepository;
+import com.celnet.retrofit.repository.TDistribuidorasRepository;
 import com.celnet.retrofit.dto.ReporteRecuperado;
+import com.celnet.retrofit.dto.ReporteAchatarrado;
 
 
 @Service
@@ -33,6 +35,9 @@ public class ReportesService {
 
     @Autowired
     private TSustitucionesRepository sustitucionesRepository;
+
+    @Autowired
+    private TDistribuidorasRepository distribuidorasRepository;
 
     public ByteArrayInputStream generarExcel(String codDistribuidora, Date fechaInicio, Date fechaFin) {
         try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
@@ -372,5 +377,22 @@ public class ReportesService {
 
         return sb.toString().getBytes(StandardCharsets.UTF_8);
     }
+
+    public byte[] generarReporteAchatarrados(String codDistribuidora, Date fechaInicio) {
+        List<ReporteAchatarrado> procesos = procesosRepository.getReporteAchatarrados(codDistribuidora, fechaInicio);
+
+        StringBuilder sb = new StringBuilder();
+        for (ReporteAchatarrado p : procesos) {
+            sb.append("").append(p.getIdContador()).append("\n"); ;
+        }
+
+        return sb.toString().getBytes(StandardCharsets.UTF_8);
+    }
+
+    public String getNomDistribuidora(String codDistribuidora) {
+        String nombre = distribuidorasRepository.findNomDistribuidoraByCodDistribuidora(codDistribuidora);
+
+        return nombre;
+    } 
 
 }
