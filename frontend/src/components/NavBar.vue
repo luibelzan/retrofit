@@ -95,10 +95,10 @@
                 <a class="dropdown-item" @click="navigate('/')">Reporte de Kaifa</a>
               </li>
               <li>
-                <a class="dropdown-item" @click="navigate('/')">Reporte de Recepcion de Equipos</a>
+                <a class="dropdown-item" @click="navigate('/reportes-recepcion')">Reporte de Recepcion de Equipos</a>
               </li>
               <li>
-                <a class="dropdown-item" @click="navigate('/')">Reporte de Equipos Recuperados</a>
+                <a class="dropdown-item" @click="navigate('/reportes-recuperados')">Reporte de Equipos Recuperados</a>
               </li>
               <li>
                 <a class="dropdown-item" @click="navigate('/')">Reporte de Equipos Achatarrados</a>

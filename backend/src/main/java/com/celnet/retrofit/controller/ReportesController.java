@@ -43,5 +43,31 @@ public class ReportesController {
             .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
             .body(new InputStreamResource(in));
         }
+
+    @GetMapping("/recepcion")
+    public ResponseEntity<byte[]> generarReporteRecepcion(
+        @RequestParam String codDistribuidora,
+        @RequestParam @DateTimeFormat( iso = DateTimeFormat.ISO.DATE) Date fechaInicio) {
+
+        byte[] contenido = reportesService.generarReporteRecepcion(codDistribuidora, fechaInicio);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=recepcionados.txt")
+                .contentType(MediaType.TEXT_PLAIN)
+                .body(contenido);
+    }
+
+    @GetMapping("/recuperados")
+    public ResponseEntity<byte[]> generarReporteRecuperados(
+        @RequestParam String codDistribuidora,
+        @RequestParam @DateTimeFormat( iso = DateTimeFormat.ISO.DATE) Date fechaInicio) {
+
+        byte[] contenido = reportesService.generarReporteRecuperados(codDistribuidora, fechaInicio);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=recuperados.txt")
+                .contentType(MediaType.TEXT_PLAIN)
+                .body(contenido);
+    }
     
 }

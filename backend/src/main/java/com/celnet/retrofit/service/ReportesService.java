@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Cell;
@@ -21,6 +22,8 @@ import com.celnet.retrofit.model.TProcesos;
 import com.celnet.retrofit.model.TSustituciones;
 import com.celnet.retrofit.repository.TProcesosRepository;
 import com.celnet.retrofit.repository.TSustitucionesRepository;
+import com.celnet.retrofit.dto.ReporteRecuperado;
+
 
 @Service
 public class ReportesService {
@@ -346,6 +349,28 @@ public class ReportesService {
         } catch (IOException e) {
             throw new RuntimeException("Error al generar el Excel", e);
         }
+    }
+
+    public byte[] generarReporteRecepcion(String codDistribuidora, Date fechaInicio) {
+        List<TProcesos> procesos = procesosRepository.getReporteRecepcionados(codDistribuidora, fechaInicio);
+
+        StringBuilder sb = new StringBuilder();
+        for (TProcesos p : procesos) {
+            sb.append("").append(p.getIdContador()).append("\n"); ;
+        }
+
+        return sb.toString().getBytes(StandardCharsets.UTF_8);
+    }
+
+    public byte[] generarReporteRecuperados(String codDistribuidora, Date fechaInicio) {
+        List<ReporteRecuperado> procesos = procesosRepository.getReporteRecuperados(codDistribuidora, fechaInicio);
+
+        StringBuilder sb = new StringBuilder();
+        for (ReporteRecuperado p : procesos) {
+            sb.append("").append(p.getIdContador()).append("\n"); ;
+        }
+
+        return sb.toString().getBytes(StandardCharsets.UTF_8);
     }
 
 }
