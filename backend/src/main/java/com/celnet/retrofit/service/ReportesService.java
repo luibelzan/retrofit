@@ -368,26 +368,45 @@ public class ReportesService {
     }
 
     public byte[] generarReporteRecuperados(String codDistribuidora, Date fechaInicio) {
-        List<ReporteRecuperado> procesos = procesosRepository.getReporteRecuperados(codDistribuidora, fechaInicio);
+        List<ReporteRecuperado> procesos =
+                procesosRepository.getReporteRecuperados(codDistribuidora, fechaInicio);
 
         StringBuilder sb = new StringBuilder();
+
         for (ReporteRecuperado p : procesos) {
-            sb.append("").append(p.getIdContador()).append("\n"); ;
+            sb.append(p.getIdContador()).append(";")
+            .append(p.getTipDiagnostico2()).append(";")
+            .append(p.getValor1()).append(";")
+            .append(p.getValor2()).append(";")
+            .append(p.getDescripcion()).append(";")
+            .append(p.getFechaFormateada())
+            .append("\n");
         }
 
         return sb.toString().getBytes(StandardCharsets.UTF_8);
     }
+
 
     public byte[] generarReporteAchatarrados(String codDistribuidora, Date fechaInicio) {
-        List<ReporteAchatarrado> procesos = procesosRepository.getReporteAchatarrados(codDistribuidora, fechaInicio);
+        List<ReporteAchatarrado> procesos =
+                procesosRepository.getReporteAchatarrados(codDistribuidora, fechaInicio);
 
         StringBuilder sb = new StringBuilder();
+
+        // Recorremos y agregamos cada fila con formato requerido
         for (ReporteAchatarrado p : procesos) {
-            sb.append("").append(p.getIdContador()).append("\n"); ;
+            sb.append(p.getIdContador()).append(";")
+            .append(p.getTipDiagnostico2()).append(";")
+            .append(p.getN()).append(";")
+            .append(p.getCodDiagnosticoIb()).append(";")
+            .append(p.getDesDiagnosticoIb()).append(";")
+            .append(p.getFechaFormateada())
+            .append("\n");
         }
 
         return sb.toString().getBytes(StandardCharsets.UTF_8);
     }
+
 
     public String getNomDistribuidora(String codDistribuidora) {
         String nombre = distribuidorasRepository.findNomDistribuidoraByCodDistribuidora(codDistribuidora);
