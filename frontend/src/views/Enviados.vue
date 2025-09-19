@@ -19,7 +19,7 @@
       </div>
 
       <button class="btn btn-primary" @click="loadStatistics">
-        Generar Excel
+        Enviar
       </button>
     </div>
   </div>
@@ -35,18 +35,28 @@
               <tr>
                 <th>
                   Id Lote
+                  <input type="text" class="form-control mt-1" v-model="filters.idLote"
+                            placeholder="Filtrar...">
                 </th>
                 <th>
                   Nombre Lote
+                  <input type="text" class="form-control mt-1" v-model="filters.nomLote"
+                            placeholder="Filtrar...">
                 </th>
                 <th>
                   Des Almacen
+                  <input type="text" class="form-control mt-1" v-model="filters.desAlmacen"
+                            placeholder="Filtrar...">
                 </th>
                 <th>
                   Cod Almacen
+                  <input type="text" class="form-control mt-1" v-model="filters.codAlmacen"
+                            placeholder="Filtrar...">
                 </th>
                 <th>
                   Numero Equipos
+                  <input type="text" class="form-control mt-1" v-model="filters.cantidad"
+                            placeholder="Filtrar...">
                 </th>
               </tr>
             </thead>
@@ -98,6 +108,13 @@ export default {
                 codDistribuidora: "",
                 fechaProceso: "",
             },
+      filters: {
+        idLote: '',
+        nomLote: '',
+        desAlmacen: '',
+        codAlmacen: '',
+        cantidad: '',
+      },
       mostrar: false,
       currentPage: 1,
       pageSize: 10, // cantidad de filas por página
@@ -110,11 +127,27 @@ export default {
       if (!this.contadoresEnviadosPorLoteData) return [];
       const start = (this.currentPageLotes - 1) * this.pageSize;
       const end = start + this.pageSize;
-      return this.contadoresEnviadosPorLoteData.slice(start, end);
+      return this.filteredEnvios.slice(start, end);
     },
     totalPagesLotes() {
       if (!this.contadoresEnviadosPorLoteData) return 1;
-      return Math.ceil(this.contadoresEnviadosPorLoteData.length / this.pageSize);
+      return Math.ceil(this.filteredEnvios.length / this.pageSize);
+    },
+    filteredEnvios() {
+      return this.contadoresEnviadosPorLoteData.filter(envio => {
+        return Object.keys(this.filters).every(key => {
+          const filterValue = this.filters[key];
+          const processValue = envio[key];
+          if(!filterValue) {
+            return true;
+          }
+          if(processValue == null) {
+            return false;
+          }
+          return filterValue.toLowerCase().includes(processValue.toString().toLowerCase()) ||
+            processValue.toString().toLowerCase().includes(filterValue.toLowerCase());
+        });
+      });
     },
   },
   async created() {

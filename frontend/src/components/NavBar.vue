@@ -89,7 +89,7 @@
                 <a class="dropdown-item" @click="navigate('/')">Reporte de Facturacion</a>
               </li>
               <li>
-                <a class="dropdown-item" @click="navigate('/reportes-landis')">Reporte de Landis&Gyr</a>
+                <a class="dropdown-item" @click="navigate('/reportes-general')">Reporte General</a>
               </li>
               <li>
                 <a class="dropdown-item" @click="navigate('/')">Reporte de Kaifa</a>

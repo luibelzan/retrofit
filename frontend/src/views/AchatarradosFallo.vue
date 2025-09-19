@@ -19,7 +19,7 @@
       </div>
 
       <button class="btn btn-primary" @click="loadStatistics">
-        Generar Excel
+        Enviar
       </button>
     </div>
   </div>
