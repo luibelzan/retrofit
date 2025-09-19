@@ -2,6 +2,7 @@ package com.celnet.retrofit.controller;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -9,6 +10,9 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,6 +39,18 @@ public class EstadisticasController {
             
             return ResponseEntity.ok(estadisticasService.getEquiposGarantia(codDistribuidora, fechaProceso));
         }
+
+    @PutMapping("/equipos-garantia/{idContador}/{codDistribuidora}/sustituto")
+    public ResponseEntity<?> actualizarContadorSustituto(
+        @PathVariable("idContador") String idContador,
+        @PathVariable("codDistribuidora") String codDistribuidora,
+        @RequestBody Map<String, String> request) {
+
+            String idContadorSust = request.get("idContadorSust");
+
+            estadisticasService.actualizarContadorSust(idContador, codDistribuidora, idContadorSust);
+            return ResponseEntity.ok().build();
+    }
 
     @GetMapping("/achatarrados-fallo")
     public ResponseEntity<List<AchatarradosPorFallo>> getAchatarradosPorFallo(@RequestParam String codDistribuidora,

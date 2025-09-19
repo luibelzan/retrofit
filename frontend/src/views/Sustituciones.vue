@@ -58,6 +58,9 @@
                 <th>
                   Fecha Proceso
                 </th>
+                <th>
+                  Contador Sust
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -70,6 +73,19 @@
                 <td>{{ equipo.desAlmacen }}</td>
                 <td>{{ equipo.desDiagnostico }}</td>
                 <td>{{ equipo.fecProceso }}</td>
+
+                <!-- Nuevo campo editable -->
+                <td>
+                  <input type="text" v-model="equipo.idContadorSust" class="form-control" />
+                </td>
+
+                <td>
+                  <button class="btn btn-sm btn-success" 
+                          @click="actualizarContadorSust(equipo)">
+                    Actualizar
+                  </button>
+                </td>
+
               </tr>
             </tbody>
           </table>
@@ -105,6 +121,7 @@
 
 import axios from "axios";
 import * as XLSX from "xlsx";
+import Swal from "sweetalert2";
 
 export default {
   data() {
@@ -183,7 +200,39 @@ export default {
 
       // Guardar archivo
       XLSX.writeFile(wb, "pendientes_sustitucion.xlsx");
+    },
+
+    async actualizarContadorSust(equipo) {
+      try {
+        await axios.put(
+          `http://localhost:8080/api/estadisticas/equipos-garantia/${equipo.idContador}/${equipo.codDistribuidora}/sustituto`,
+          { idContadorSust: equipo.idContadorSust }
+        );
+
+        Swal.fire({
+          icon: "success",
+          title: "¡Actualizado!",
+          text: "Sustituto actualizado correctamente",
+          timer: 2000,
+          showConfirmButton: false
+        });
+
+      } catch (error) {
+        let mensaje = "Error inesperado al guardar sustituto";
+
+        if (error.response && error.response.data && error.response.data.error) {
+          mensaje = error.response.data.error;
+        }
+
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: mensaje
+        });
+      }
     }
+
+
   },
 };
 
