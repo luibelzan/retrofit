@@ -42,6 +42,10 @@ public class LotesService {
         return tLotesRepository.findByEstadoLote("A");
     }
 
+    public List<TLotes> getClosedLotes() {
+        return tLotesRepository.findByEstadoLote("C");
+    }
+
     public List<TLotes> getOpenedLotesByDistribuidora(String codDistribuidora) {
         return tLotesRepository.findByCodDistribuidoraAndEstado(codDistribuidora);
     }

@@ -57,6 +57,17 @@ public class LotesController {
         return ResponseEntity.ok(lotes);
     }
 
+    //Obtener lotes cerrados
+    @GetMapping("/cerrados")
+    public ResponseEntity<List<TLotes>> getClosedLotes() {
+        try {
+            List<TLotes> lotes = lotesService.getClosedLotes();
+            return ResponseEntity.ok(lotes);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(null);
+        }
+    }
+
     // Obtener lotes abiertos filtrados por codDistribuidora
     @GetMapping("/abiertos/{codDistribuidora}")
     public ResponseEntity<List<TLotes>> getOpenedLotesByDistribuidora(@PathVariable String codDistribuidora) {

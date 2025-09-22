@@ -1,7 +1,17 @@
 <template>
     <div class="container mt-3">
         <h1 class="text-center mb-3">Gestión de Lotes</h1>
-        <button class="btn btn-primary mb-3" @click="abrirModalCrear">Crear Nuevo Lote</button>
+        <div class="d-flex justify-content-between mb-3">
+            <button class="btn btn-primary" @click="abrirModalCrear">Crear Nuevo Lote</button>
+            <button 
+                class="btn"
+                :class="mostrarCerrados ? 'btn-success' : 'btn-outline-secondary'"
+                @click="toggleMostrarCerrados">
+                {{ mostrarCerrados ? "Ocultar lotes cerrados" : "Mostrar lotes cerrados" }}
+            </button>
+        </div>
+
+
 
         <!-- Tabla de lotes -->
         <div class="table-responsive">
@@ -17,7 +27,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="lote in lotes" :key="lote.idLote">
+                    <tr v-for="lote in paginatedLotes" :key="lote.idLote">
                         <td>{{ lote.idLote }}</td>
                         <td>{{ lote.codDistribuidora }}</td>
                         <td>{{ lote.nomLote }}</td>
@@ -28,12 +38,27 @@
                                 <button class="btn btn-info btn-sm" @click="abrirModalVer(lote)">Ver</button>
                                 <button class="btn btn-warning btn-sm" @click="abrirModalEditar(lote)">Editar</button>
                                 <button class="btn btn-danger btn-sm" @click="eliminarLote(lote)">Eliminar</button>
-                                <button class="btn btn-low-danger btn-sm" @click="cerrarLote(lote)">Cerrar</button>
+                                <button 
+                                    v-if="!mostrarCerrados" 
+                                    class="btn btn-low-danger btn-sm" 
+                                    @click="cerrarLote(lote)">
+                                    Cerrar
+                                </button>
+
                             </div>
                         </td>
                     </tr>
                 </tbody>
             </table>
+        </div>
+
+        <!-- Paginación -->
+        <div class="d-flex justify-content-center mt-3">
+            <button class="btn btn-primary" :disabled="currentPage === 1"
+                @click="changePage(currentPage - 1)">Anterior</button>
+            <span class="mx-3">Página {{ currentPage }} de {{ totalPages }}</span>
+            <button class="btn btn-primary" :disabled="currentPage === totalPages"
+                @click="changePage(currentPage + 1)">Siguiente</button>
         </div>
 
         <!-- Modal Crear Lote -->
@@ -157,6 +182,10 @@ export default {
     data() {
         return {
             lotes: [],
+            mostrarCerrados: false,
+            currentPage: 1,
+            pageSize: 10,
+            totalPages: 1,
             almacenes: [],
             distribuidoras: [],
             nuevoLote: {
@@ -178,21 +207,40 @@ export default {
             modalVerVisible: false,
         };
     },
+    computed: {
+        paginatedLotes() {
+            const start = (this.currentPage - 1) * this.pageSize;
+            const end = start + this.pageSize;
+            return this.lotes.slice(start, end);
+        },
+    },
     mounted() {
         this.fetchLotes();
         this.cargarAlmacenes();
         this.fetchData();
     },
     methods: {
+        toggleMostrarCerrados() {
+            this.mostrarCerrados = !this.mostrarCerrados;
+            this.fetchLotes();
+        },
         fetchLotes() {
+            const url = this.mostrarCerrados
+            ? "http://localhost:8080/api/lotes/cerrados"
+            : "http://localhost:8080/api/lotes";
+            
             axios
-                .get("http://localhost:8080/api/lotes")
-                .then((response) => {
-                    this.lotes = response.data;
-                })
-                .catch((error) => {
-                    console.error("Error al obtener los lotes:", error);
-                });
+            .get(url)
+            .then((response) => {
+                this.lotes = response.data;
+                this.totalPages = Math.ceil(this.lotes.length / this.pageSize);
+                if (this.currentPage > this.totalPages) {
+                    this.currentPage = this.totalPages || 1;
+                }
+            })
+            .catch((error) => {
+                console.error("Error al obtener los lotes:", error);
+            });
         },
         async fetchData() {
             try {
@@ -351,6 +399,11 @@ export default {
 
             const almacen = this.almacenes.find(alm => alm.codAlmacen === codigoAlmacen);
             return almacen ? almacen.desAlmacen : "Almacén no encontrado";
+        },
+
+        changePage(page) {
+            if (page < 1 || page > this.totalPages) return;
+            this.currentPage = page;
         },
 
     },
