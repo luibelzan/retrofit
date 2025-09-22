@@ -42,9 +42,9 @@ public interface EstadisticasRepository extends JpaRepository<TProcesos, TProces
               ON t_proceso.cod_distribuidora = t_almacenes.cod_distribuidora
              AND t_proceso.cod_almacen = t_almacenes.cod_almacen
             WHERE t_proceso.cod_distribuidora = :codDistribuidora
-              AND t_proceso.tip_diagnostico = 'CH'
-              AND t_proceso.cod_diagnostico <> 3
-              AND t_proceso.fec_proceso >= :fecProceso
+              AND t_proceso.tip_diagnostico2 = 'CH'
+              AND t_proceso.cod_diagnostico2 <> 3
+              AND t_proceso.fec_proceso2 >= :fecProceso
               AND t_proceso.id_lote IS NULL
               AND t_proceso.id_contador_sust IS NULL
             ORDER BY t_proceso.cod_modelo, t_proceso.tip_diagnostico, t_proceso.cod_almacen
@@ -61,9 +61,9 @@ public interface EstadisticasRepository extends JpaRepository<TProcesos, TProces
             FROM t_proceso tp
             JOIN t_diagnostico d
               ON CAST(d.cod_diagnostico AS INTEGER) = tp.cod_diagnostico
-            WHERE tp.tip_diagnostico = 'CH'
+            WHERE tp.tip_diagnostico2 = 'CH'
             AND tp.cod_distribuidora = :codDistribuidora
-            AND tp.fec_proceso >= :fecProceso
+            AND tp.fec_proceso2 >= :fecProceso
             GROUP BY tp.cod_diagnostico, d.des_diagnostico
             ORDER BY tp.cod_diagnostico
             """, nativeQuery = true)

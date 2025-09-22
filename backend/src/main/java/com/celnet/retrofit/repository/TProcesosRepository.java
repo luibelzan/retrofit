@@ -28,11 +28,11 @@ public interface TProcesosRepository extends JpaRepository<TProcesos, TProcesosI
         Optional<TProcesos> findByIdContadorAndCodDistribuidora(String idContador, String codDistribuidora);
 
         // Contar registros por distribuidora y diagnóstico
-        @Query("SELECT COUNT(p) FROM TProcesos p WHERE p.codDistribuidora = :codDistribuidora AND p.tipDiagnostico = :tipDiagnostico")
+        @Query("SELECT COUNT(p) FROM TProcesos p WHERE p.codDistribuidora = :codDistribuidora AND p.tipDiagnostico2 = :tipDiagnostico")
         Long countByCodDistribuidoraAndTipDiagnostico(String codDistribuidora, String tipDiagnostico);
 
         // Contar registros por distribuidora y diagnóstico con campo codLote nulo
-        @Query("SELECT COUNT(p) FROM TProcesos p WHERE p.codDistribuidora = :codDistribuidora AND p.tipDiagnostico = :tipDiagnostico AND p.idLote IS NULL")
+        @Query("SELECT COUNT(p) FROM TProcesos p WHERE p.codDistribuidora = :codDistribuidora AND p.tipDiagnostico2 = :tipDiagnostico AND p.idLote IS NULL")
         Long countByCodDistribuidoraAndTipDiagnosticoAndCodLoteIsNull(
                         @Param("codDistribuidora") String codDistribuidora,
                         @Param("tipDiagnostico") String tipDiagnostico);
@@ -77,25 +77,25 @@ public interface TProcesosRepository extends JpaRepository<TProcesos, TProcesosI
                         @Param("fechaInicio") Date fechaInicio,
                         @Param("fechaFin") Date fechaFin);
 
-        @Query("SELECT p FROM TProcesos p WHERE p.codDistribuidora = :codDistribuidora AND p.fecProceso >= :fechaInicio AND p.fecProceso <= :fechaFin AND tipDiagnostico = 'RP'")
+        @Query("SELECT p FROM TProcesos p WHERE p.codDistribuidora = :codDistribuidora AND p.fecProceso2 >= :fechaInicio AND p.fecProceso2 <= :fechaFin AND tipDiagnostico2 = 'RP'")
         List<TProcesos> getRecuperados(
                         @Param("codDistribuidora") String codDistribuidora,
                         @Param("fechaInicio") Date fechaInicio,
                         @Param("fechaFin") Date fechaFin);
 
-        @Query("SELECT p FROM TProcesos p WHERE p.codDistribuidora = :codDistribuidora AND p.fecRecepcion >= :fechaInicio AND p.fecRecepcion <= :fechaFin AND tipDiagnostico = 'CH' AND p.idContadorSust IS NOT NULL")
+        @Query("SELECT p FROM TProcesos p WHERE p.codDistribuidora = :codDistribuidora AND p.fecRecepcion >= :fechaInicio AND p.fecRecepcion <= :fechaFin AND tipDiagnostico2 = 'CH' AND p.idContadorSust IS NOT NULL")
         List<TProcesos> getSustituidos(
                         @Param("codDistribuidora") String codDistribuidora,
                         @Param("fechaInicio") Date fechaInicio,
                         @Param("fechaFin") Date fechaFin);
 
-        @Query("SELECT p FROM TProcesos p WHERE p.codDistribuidora = :codDistribuidora AND p.fecRecepcion >= :fechaInicio AND p.fecRecepcion <= :fechaFin AND tipDiagnostico = 'CH' AND p.codDiagnostico = 3")
+        @Query("SELECT p FROM TProcesos p WHERE p.codDistribuidora = :codDistribuidora AND p.fecRecepcion >= :fechaInicio AND p.fecRecepcion <= :fechaFin AND tipDiagnostico2 = 'CH' AND p.codDiagnostico2 = 3")
         List<TProcesos> getDanoFisico(
                         @Param("codDistribuidora") String codDistribuidora,
                         @Param("fechaInicio") Date fechaInicio,
                         @Param("fechaFin") Date fechaFin);
 
-        @Query("SELECT p FROM TProcesos p WHERE p.codDistribuidora = :codDistribuidora AND p.fecRecepcion >= :fechaInicio AND p.fecRecepcion <= :fechaFin AND tipDiagnostico = 'RC' AND p.codDiagnostico = 30")
+        @Query("SELECT p FROM TProcesos p WHERE p.codDistribuidora = :codDistribuidora AND p.fecRecepcion >= :fechaInicio AND p.fecRecepcion <= :fechaFin AND tipDiagnostico2 = 'RC' AND p.codDiagnostico2 = 30")
         List<TProcesos> getPendientes(
                         @Param("codDistribuidora") String codDistribuidora,
                         @Param("fechaInicio") Date fechaInicio,
@@ -132,7 +132,7 @@ public interface TProcesosRepository extends JpaRepository<TProcesos, TProcesosI
         from t_proceso,t_diagnostico
         where t_proceso.cod_distribuidora = :codDistribuidora and
               t_proceso.tip_diagnostico2 = 'CH' and
-              t_proceso.cod_diagnostico = t_diagnostico.cod_diagnostico  and
+              t_proceso.cod_diagnostico2 = t_diagnostico.cod_diagnostico  and
             t_proceso.fec_proceso2 >= :fechaInicio
         """, nativeQuery = true)
         List<ReporteAchatarrado> getReporteAchatarrados(
