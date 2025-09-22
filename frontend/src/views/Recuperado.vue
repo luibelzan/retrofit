@@ -114,6 +114,24 @@ export default {
             oscillator.start();
             setTimeout(() => oscillator.stop(), 1000); // dura 1 segundo
     },
+    playSuccess() {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = ctx.createOscillator();
+        const gainNode = ctx.createGain();
+
+        oscillator.type = "sine"; // onda más suave
+        oscillator.frequency.setValueAtTime(600, ctx.currentTime); // tono inicial
+        oscillator.frequency.linearRampToValueAtTime(900, ctx.currentTime + 0.3); // sube el tono
+
+        gainNode.gain.setValueAtTime(0.2, ctx.currentTime); // volumen
+        gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3); // desvanecimiento suave
+
+        oscillator.connect(gainNode);
+        gainNode.connect(ctx.destination);
+
+        oscillator.start();
+        oscillator.stop(ctx.currentTime + 0.3); // duración corta (300ms)
+    },
     async fetchData() {
       try {
         const resDistribuidoras = await fetch("http://localhost:8080/api/achatarrado/distribuidoras");
@@ -160,14 +178,8 @@ export default {
             codDiagnostico: this.codDiagnostico,
           });
           this.idContador = "";
-
-          Swal.fire({
-            icon: "success",
-            title: "Contador Añadido",
-            text: "El contador se agregó correctamente.",
-            timer: 1000,
-            showConfirmButton: false,
-          });
+          this.playSuccess();
+        
         } catch (error) {
           this.playAlarm();
           Swal.fire({

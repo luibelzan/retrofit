@@ -133,6 +133,25 @@ export default {
             setTimeout(() => oscillator.stop(), 1000); // dura 1 segundo
     },
 
+    playSuccess() {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = ctx.createOscillator();
+        const gainNode = ctx.createGain();
+
+        oscillator.type = "sine"; // onda más suave
+        oscillator.frequency.setValueAtTime(600, ctx.currentTime); // tono inicial
+        oscillator.frequency.linearRampToValueAtTime(900, ctx.currentTime + 0.3); // sube el tono
+
+        gainNode.gain.setValueAtTime(0.2, ctx.currentTime); // volumen
+        gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3); // desvanecimiento suave
+
+        oscillator.connect(gainNode);
+        gainNode.connect(ctx.destination);
+
+        oscillator.start();
+        oscillator.stop(ctx.currentTime + 0.3); // duración corta (300ms)
+    },
+
         async cargarAlmacenes() {
             const { distribuidora } = this.formData;
             try {
@@ -157,6 +176,8 @@ export default {
                 nuevoAlmacen: registro.almacen,
                 estado: response.data.message,
             });
+
+            this.playSuccess();
 
             // Actualizar el input con el código corregido (por si el usuario lo vuelve a usar o editar)
             //this.formData.codigoBarras = codigoBarrasCorregido;
