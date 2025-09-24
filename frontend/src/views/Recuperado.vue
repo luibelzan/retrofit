@@ -53,6 +53,11 @@
           <p><strong>{{ contador.codDiagnostico }}</strong></p>
         </div>
 
+        <div>
+          <p>Codigo Almacen: <strong>{{ contador.codAlmacen }}</strong></p>
+          <p>Fecha Recepcion: <strong>{{ new Date(contador.fecRecepcion).toLocaleDateString('es-ES') }}</strong></p>
+        </div>
+
         <!-- Selección de nuevo diagnóstico -->
         <div class="d-flex align-items-center mx-3">
           <label class="me-2">Reasignar</label>
@@ -96,6 +101,9 @@ export default {
       codDiagnostico: "",
       idContador: "",
       contadores: [],
+      codAlmacen: "",
+      desAlmacen: "",
+      fecRecepcion: "",
     };
   },
   methods: {
@@ -168,6 +176,8 @@ export default {
             idContador: idContadorProcesado,
             codDistribuidora: this.codDistribuidora,
             codDiagnostico: this.codDiagnostico,
+            codAlmacen: result.codAlmacen,
+            fecRecepcion: result.fecRecepcion,
           });
           this.idContador = "";
           this.playSuccess();
@@ -197,8 +207,8 @@ export default {
             ids: this.contadores.map((c) => ({
               idContador: c.idContador,
               codDistribuidora: c.codDistribuidora,
+              codDiagnostico: c.codDiagnostico,
             })),
-            codDiagnostico: this.codDiagnostico,
             tipDiagnostico: "RP"
           }),
         });
