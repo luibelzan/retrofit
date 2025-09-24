@@ -144,27 +144,19 @@ export default {
       }
     },
     async agregarContador() {
-      if (!this.idContador || !this.codDistribuidora || !this.codDiagnostico) {
+      const url = `http://localhost:8080/api/achatarrado/validar/${this.idContador}?codDistribuidora=${this.codDistribuidora}`;
+      const response = await fetch(url);
+      const result = await response.json();
+
+      if(!response.ok) {
         this.playAlarm();
         Swal.fire({
           icon: "warning",
-          title: "Campos incompletos",
-          text: "Debes seleccionar distribuidora, diagnóstico y escribir un ID de contador.",
+          title: "Error al validar contador",
+          text: result.mensaje,
         });
-        return;
-      }
-
-      // Validar longitud (entre 18 y 20 caracteres alfanuméricos)
-      const id = this.idContador.trim();
-      if (!((id.length === 18 || id.length === 20) && /^[A-Z0-9]+$/.test(id))) {
-        this.playAlarm();
-        Swal.fire({
-          icon: "error",
-          title: "ID Contador no válido",
-          text: "El ID del contador debe tener entre 18 y 20 caracteres sin espacios ni caracteres especiales.",
-        });
-        return;
-      }
+        //throw new Error(result.mensaje || "Error desconocido");
+      } else {
         try {
           // Eliminar sufijo 'ME' si tiene longitud 20 y termina en 'ME'
           let idContadorProcesado = this.idContador;
@@ -188,6 +180,8 @@ export default {
             text: error.message,
           });
         }
+      }
+
     },
     eliminarContador(index) {
       this.contadores.splice(index, 1);
