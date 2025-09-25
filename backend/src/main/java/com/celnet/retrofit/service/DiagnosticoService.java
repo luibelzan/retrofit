@@ -30,7 +30,7 @@ public class DiagnosticoService {
     public TProcesos actualizarProceso(String idContador, String codDistribuidora, Integer codDiagnostico, String tipDiagnostico) {
         TProcesos p = procesoRepository.findByIdContadorAndCodDistribuidora(idContador, codDistribuidora).get();
         int updatedRows = 0;
-        if(p.getFecRecepcion2() != null) {
+        if(!p.getFecRecepcion2().equals(p.getFecRecepcion())) {
             updatedRows = procesoRepository.updateDiagnosticoWithFecRecepcion2(codDistribuidora, idContador, tipDiagnostico, codDiagnostico, LocalDate.now());
         } else {
             // Actualizar directamente el diagnóstico y la fecha de proceso sin validar existencia del proceso

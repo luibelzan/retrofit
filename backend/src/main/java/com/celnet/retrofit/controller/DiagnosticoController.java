@@ -44,7 +44,8 @@ public class DiagnosticoController {
                 "idContador", proceso.getIdContador(),
                 "codDistribuidora", proceso.getCodDistribuidora(),
                 "codAlmacen", proceso.getCodAlmacen(),
-                "fecRecepcion", proceso.getFecRecepcion()
+                "fecRecepcion", proceso.getFecRecepcion(),
+                "fecRecepcion2", proceso.getFecRecepcion2()
             ));
         } catch (RuntimeException ex) {
             return ResponseEntity.badRequest().body(Map.of(

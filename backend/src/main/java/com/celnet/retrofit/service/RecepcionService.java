@@ -53,15 +53,15 @@ public class RecepcionService {
             // Verificar si CodFabricante, CodModelo o AnoFabricacion están vacíos o nulos
             if(proceso.getCodFabricante() != null && proceso.getCodModelo() != null && proceso.getAnoFabricacion() != null && proceso.getFecRecepcion() != null && proceso.getFecProceso2() != null) {
                 if(proceso.getFecRecepcion2() == null) {
-                    return "Este contador ya ha sido recepcionado y procesado previamente. Tipo diagnostico: " + proceso.getTipDiagnostico2() + " Codigo diagnostico: " + proceso.getCodDiagnostico2() + " Fecha recepcion: " + proceso.getFecRecepcion();
+                    return "Este contador ya ha sido recepcionado y procesado previamente. Tipo diagnostico: " + proceso.getTipDiagnostico2() + " Codigo diagnostico: " + proceso.getCodDiagnostico2() + " Fecha recepcion: " + proceso.getFecRecepcion2();
                 } else {
-                    return "Este contador ya ha sido recepcionado y procesado previamente. Tipo diagnostico: " + proceso.getTipDiagnostico() + " Codigo diagnostico: " + proceso.getCodDiagnostico() + " Fecha recepcion: " + proceso.getFecRecepcion2();
+                    return "Este contador ya ha sido recepcionado y procesado previamente. Tipo diagnostico: " + proceso.getTipDiagnostico2() + " Codigo diagnostico: " + proceso.getCodDiagnostico2() + " Fecha recepcion: " + proceso.getFecRecepcion2();
                 }
                 
             } else if (proceso.getCodFabricante() != null && proceso.getCodModelo() != null && proceso.getAnoFabricacion() != null) {
                 if(proceso.getFecRecepcion2() == null) {
                     // Si hay valores en estos campos, retornamos el mensaje de que el proceso existe
-                    return "Este contador ya ha sido recepcionado previamente, revíselo antes de continuar. Fecha de recepcion: " + proceso.getFecRecepcion();
+                    return "Este contador ya ha sido recepcionado previamente, revíselo antes de continuar. Fecha de recepcion: " + proceso.getFecRecepcion2();
                 } else {
                     return "Este contador ya ha sido recepcionado previamente, revíselo antes de continuar. Fecha de recepcion: " + proceso.getFecRecepcion2();
                 }
@@ -101,7 +101,7 @@ public class RecepcionService {
         Optional<TProcesos> procesoExistente = tProcesosRepository.findByIdContadorAndCodDistribuidora(codigoBarras, distribuidora);
 
         TProcesos proceso;
-        if (procesoExistente.isPresent() && "RP".equals(procesoExistente.get().getTipDiagnostico())) {
+        if (procesoExistente.isPresent() && "RP".equals(procesoExistente.get().getTipDiagnostico2())) {
             // Actualizar registro existente
             proceso = procesoExistente.get();
             proceso.setCodAlmacen(Integer.valueOf(almacen));
@@ -118,7 +118,7 @@ public class RecepcionService {
 
             //Actualiza la fecha de recepcion 2
             proceso.setFecRecepcion2(hoy);
-        } else if(procesoExistente.isPresent() && !"RP".equals(procesoExistente.get().getTipDiagnostico())) {
+        } else if(procesoExistente.isPresent() && "CH".equals(procesoExistente.get().getTipDiagnostico())) {
             return;
         } else {
             // Crear un nuevo registro
@@ -136,7 +136,7 @@ public class RecepcionService {
             proceso.setDesObservaciones(desObservaciones);
             proceso.setTipDiagnostico("RC");
             proceso.setCodDiagnostico(30);
-            //proceso.setFecRecepcion2(new Date());
+            proceso.setFecRecepcion2(new Date());
             proceso.setTipDiagnostico2("RC");
             proceso.setCodDiagnostico2(30);
         }

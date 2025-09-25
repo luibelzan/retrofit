@@ -57,7 +57,7 @@
 
         <div>
           <p>Codigo Almacen: <strong>{{ contador.codAlmacen }}</strong></p>
-          <p>Fecha Recepcion: <strong>{{ new Date(contador.fecRecepcion).toLocaleDateString('es-ES') }}</strong></p>
+          <p>Fecha Recepcion: <strong>{{ new Date(contador.fecRecepcion2).toLocaleDateString('es-ES') }}</strong></p>
         </div>
 
         <!-- Selección de nuevo diagnóstico -->
@@ -105,6 +105,7 @@ export default {
       codAlmacen: "",
       desAlmacen: "",
       fecRecepcion: "",
+      fecRecepcion2: "",
     };
   },
   methods: {
@@ -179,6 +180,7 @@ export default {
             codDiagnostico: this.codDiagnostico,
             codAlmacen: result.codAlmacen,
             fecRecepcion: result.fecRecepcion,
+            fecRecepcion2: result.fecRecepcion2,
           });
           this.idContador = "";
           this.playSuccess();
