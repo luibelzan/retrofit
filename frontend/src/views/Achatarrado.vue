@@ -57,6 +57,7 @@
 
         <div>
           <p>Codigo Almacen: <strong>{{ contador.codAlmacen }}</strong></p>
+          <p>Almacen: <strong>{{ contador.desAlmacen }}</strong></p>
           <p>Fecha Recepcion: <strong>{{ new Date(contador.fecRecepcion2).toLocaleDateString('es-ES') }}</strong></p>
         </div>
 
@@ -179,6 +180,7 @@ export default {
             codDistribuidora: this.codDistribuidora,
             codDiagnostico: this.codDiagnostico,
             codAlmacen: result.codAlmacen,
+            desAlmacen: result.desAlmacen,
             fecRecepcion: result.fecRecepcion,
             fecRecepcion2: result.fecRecepcion2,
           });

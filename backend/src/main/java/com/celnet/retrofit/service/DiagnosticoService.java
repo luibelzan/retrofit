@@ -73,4 +73,10 @@ public class DiagnosticoService {
         }
         return procesos;
     }
+
+    public String getDesAlmacenByCodAlmacen(Integer codAlmacen, String codDistribuidora) {
+        String desAlmacen = diagnosticoRepository.findDesAlmacen(codAlmacen, codDistribuidora);
+
+        return desAlmacen;
+    }
 }

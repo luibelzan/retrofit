@@ -37,13 +37,14 @@ public class DiagnosticoController {
     ) {
         try {
             TProcesos proceso = diagnosticoService.validarContador(idContador, codDistribuidora);
-
+            String desAlmacen = diagnosticoService.getDesAlmacenByCodAlmacen(proceso.getCodAlmacen(), proceso.getCodDistribuidora());
             return ResponseEntity.ok().body(Map.of(
                 "valido", true,
                 "mensaje", "El contador es válido",
                 "idContador", proceso.getIdContador(),
                 "codDistribuidora", proceso.getCodDistribuidora(),
                 "codAlmacen", proceso.getCodAlmacen(),
+                "desAlmacen", desAlmacen,
                 "fecRecepcion", proceso.getFecRecepcion(),
                 "fecRecepcion2", proceso.getFecRecepcion2()
             ));
