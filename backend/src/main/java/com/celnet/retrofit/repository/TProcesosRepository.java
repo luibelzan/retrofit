@@ -42,11 +42,11 @@ public interface TProcesosRepository extends JpaRepository<TProcesos, TProcesosI
         Long countByCodDistribuidora(String codDistribuidora);
 
         // Calcular tiempo medio de procesado en días por distribuidora
-        @Query("SELECT p.fecRecepcion, p.fecProceso FROM TProcesos p WHERE p.idContador = :id")
+        @Query("SELECT p.fecRecepcion2, p.fecProceso2 FROM TProcesos p WHERE p.idContador = :id")
         List<Object[]> getTimestamps(@Param("id") String id);
 
         // Método para obtener las fechas de proceso y recepción
-        @Query(value = "SELECT fec_proceso, fec_recepcion FROM t_proceso WHERE cod_distribuidora = :codDistribuidora AND fec_proceso IS NOT NULL AND fec_recepcion IS NOT NULL", nativeQuery = true)
+        @Query(value = "SELECT fec_proceso2, fec_recepcion2 FROM t_proceso WHERE cod_distribuidora = :codDistribuidora AND fec_proceso2 IS NOT NULL AND fec_recepcion2 IS NOT NULL", nativeQuery = true)
         List<Object[]> findProcesoDatesByDistribuidora(@Param("codDistribuidora") String codDistribuidora);
 
         @Modifying
@@ -71,7 +71,7 @@ public interface TProcesosRepository extends JpaRepository<TProcesos, TProcesosI
                         @Param("codDiagnostico2") Integer codDiagnostico2,
                         @Param("fecProceso2") LocalDate fecProceso2);
 
-        @Query("SELECT p FROM TProcesos p WHERE p.codDistribuidora = :codDistribuidora AND p.fecRecepcion >= :fechaInicio AND p.fecRecepcion <= :fechaFin")
+        @Query("SELECT p FROM TProcesos p WHERE p.codDistribuidora = :codDistribuidora AND p.fecRecepcion2 >= :fechaInicio AND p.fecRecepcion2 <= :fechaFin")
         List<TProcesos> getTotalEquipos(
                         @Param("codDistribuidora") String codDistribuidora,
                         @Param("fechaInicio") Date fechaInicio,
@@ -83,25 +83,25 @@ public interface TProcesosRepository extends JpaRepository<TProcesos, TProcesosI
                         @Param("fechaInicio") Date fechaInicio,
                         @Param("fechaFin") Date fechaFin);
 
-        @Query("SELECT p FROM TProcesos p WHERE p.codDistribuidora = :codDistribuidora AND p.fecRecepcion >= :fechaInicio AND p.fecRecepcion <= :fechaFin AND tipDiagnostico2 = 'CH' AND p.idContadorSust IS NOT NULL")
+        @Query("SELECT p FROM TProcesos p WHERE p.codDistribuidora = :codDistribuidora AND p.fecRecepcion2 >= :fechaInicio AND p.fecRecepcion2 <= :fechaFin AND tipDiagnostico2 = 'CH' AND p.idContadorSust IS NOT NULL")
         List<TProcesos> getSustituidos(
                         @Param("codDistribuidora") String codDistribuidora,
                         @Param("fechaInicio") Date fechaInicio,
                         @Param("fechaFin") Date fechaFin);
 
-        @Query("SELECT p FROM TProcesos p WHERE p.codDistribuidora = :codDistribuidora AND p.fecRecepcion >= :fechaInicio AND p.fecRecepcion <= :fechaFin AND tipDiagnostico2 = 'CH' AND p.codDiagnostico2 = 3")
+        @Query("SELECT p FROM TProcesos p WHERE p.codDistribuidora = :codDistribuidora AND p.fecRecepcion2 >= :fechaInicio AND p.fecRecepcion2 <= :fechaFin AND tipDiagnostico2 = 'CH' AND p.codDiagnostico2 = 3")
         List<TProcesos> getDanoFisico(
                         @Param("codDistribuidora") String codDistribuidora,
                         @Param("fechaInicio") Date fechaInicio,
                         @Param("fechaFin") Date fechaFin);
 
-        @Query("SELECT p FROM TProcesos p WHERE p.codDistribuidora = :codDistribuidora AND p.fecRecepcion >= :fechaInicio AND p.fecRecepcion <= :fechaFin AND tipDiagnostico2 = 'RC' AND p.codDiagnostico2 = 30")
+        @Query("SELECT p FROM TProcesos p WHERE p.codDistribuidora = :codDistribuidora AND p.fecRecepcion2 >= :fechaInicio AND p.fecRecepcion2 <= :fechaFin AND tipDiagnostico2 = 'RC' AND p.codDiagnostico2 = 30")
         List<TProcesos> getPendientes(
                         @Param("codDistribuidora") String codDistribuidora,
                         @Param("fechaInicio") Date fechaInicio,
                         @Param("fechaFin") Date fechaFin);
 
-        @Query("SELECT p FROM TProcesos p WHERE p.codDistribuidora = :codDistribuidora AND p.fecRecepcion >= :fechaInicio")
+        @Query("SELECT p FROM TProcesos p WHERE p.codDistribuidora = :codDistribuidora AND p.fecRecepcion2 >= :fechaInicio")
         List<TProcesos> getReporteRecepcionados(
                         @Param("codDistribuidora") String codDistribuidora,
                         @Param("fechaInicio") Date fechaInicio);

@@ -22,16 +22,16 @@ public interface EstadisticasRepository extends JpaRepository<TProcesos, TProces
                    t_proceso.cod_fabricante as codFabricante,
                    t_proceso.cod_modelo as codModelo,
                    t_proceso.ano_fabricacion as anoFabricacion,
-                   t_proceso.fec_recepcion as fecRecepcion,
+                   t_proceso.fec_recepcion2 as fecRecepcion,
                    t_proceso.cod_almacen as codAlmacen,
                    t_almacenes.des_almacen as desAlmacen,
                    t_proceso.fec_averia as fecAveria,
                    t_proceso.des_averia as desAveria,
                    t_proceso.des_observaciones as desObservaciones,
-                   t_proceso.tip_diagnostico as tipDiagnostico,
+                   t_proceso.tip_diagnostico2 as tipDiagnostico,
                    t_diagnostico.des_diagnostico as desDiagnostico,
-                   t_proceso.fec_proceso as fecProceso,
-                   t_proceso.cod_diagnostico as codDiagnostico,
+                   t_proceso.fec_proceso2 as fecProceso,
+                   t_proceso.cod_diagnostico2 as codDiagnostico,
                    t_proceso.id_lote as idLote,
                    t_proceso.id_contador_sust as idContadorSust
             FROM public.t_proceso
@@ -55,9 +55,9 @@ public interface EstadisticasRepository extends JpaRepository<TProcesos, TProces
 
     @Query(value = """
             SELECT
-                tp.cod_diagnostico AS codDiagnostico,
+                tp.cod_diagnostico2 AS codDiagnostico,
                 d.des_diagnostico AS desDiagnostico,
-                COUNT(tp.cod_diagnostico) AS cantidad
+                COUNT(tp.cod_diagnostico2) AS cantidad
             FROM t_proceso tp
             JOIN t_diagnostico d
               ON CAST(d.cod_diagnostico AS INTEGER) = tp.cod_diagnostico
