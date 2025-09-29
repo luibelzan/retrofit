@@ -22,6 +22,7 @@ import Sustituciones from '@/views/Sustituciones.vue'
 import ReportesRecepcion from '@/views/ReportesRecepcion.vue'
 import ReportesRecuperados from '@/views/ReportesRecuperados.vue'
 import ReportesAchatarrados from '@/views/ReportesAchatarrados.vue'
+import ReportesContadoresPorEnviar from '@/views/ReportesContadoresPorEnviar.vue'
 
 const routes = [
   {
@@ -138,6 +139,11 @@ const routes = [
     path: '/estadisticas',
     name: 'Estadisticas',
     component: Estadisticas,
+  },
+  {
+    path: '/reportes-contadores-por-enviar',
+    name: 'ReportesContadoresPorEnviar',
+    component: ReportesContadoresPorEnviar,
   },
 ]
 

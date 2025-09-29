@@ -18,6 +18,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.celnet.retrofit.dto.ContadoresPorEnviar;
+
 @RestController
 @CrossOrigin(origins = "http://localhost:8080", allowedHeaders="*", methods={RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS})
 @RequestMapping("/api/reportes")
@@ -105,6 +107,12 @@ public class ReportesController {
                 .header(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, HttpHeaders.CONTENT_DISPOSITION)
                 .contentType(MediaType.TEXT_PLAIN)
                 .body(contenido);
+    }
+
+    @GetMapping("/contadores-por-enviar")
+    public ResponseEntity<List<ContadoresPorEnviar>> getContadoresPorEnviar(@RequestParam String codDistribuidora,
+        @RequestParam @DateTimeFormat( iso = DateTimeFormat.ISO.DATE) Date fecha) {
+        return ResponseEntity.ok(reportesService.getContadoresPorEnviar(codDistribuidora, fecha));
     }
     
 }

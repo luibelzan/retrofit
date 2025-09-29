@@ -22,8 +22,10 @@ import com.celnet.retrofit.model.TProcesos;
 import com.celnet.retrofit.model.TSustituciones;
 import com.celnet.retrofit.repository.TProcesosRepository;
 import com.celnet.retrofit.repository.TSustitucionesRepository;
+import com.celnet.retrofit.repository.ReportesRepository;
 import com.celnet.retrofit.repository.TDistribuidorasRepository;
 import com.celnet.retrofit.dto.ReporteRecuperado;
+import com.celnet.retrofit.dto.ContadoresPorEnviar;
 import com.celnet.retrofit.dto.ReporteAchatarrado;
 
 
@@ -38,6 +40,9 @@ public class ReportesService {
 
     @Autowired
     private TDistribuidorasRepository distribuidorasRepository;
+
+    @Autowired
+    private ReportesRepository reportesRepository;
 
     public ByteArrayInputStream generarExcel(String codDistribuidora, Date fechaInicio, Date fechaFin) {
         try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
@@ -413,5 +418,9 @@ public class ReportesService {
 
         return nombre;
     } 
+
+    public List<ContadoresPorEnviar> getContadoresPorEnviar(String codDistribuidora, Date fecha) {
+        return reportesRepository.findContadoresPorEnviar(codDistribuidora, fecha);
+    }
 
 }
