@@ -25,7 +25,7 @@ public interface ReportesRepository extends JpaRepository<TProcesos, TProcesosId
             Contadores_Recuperados,
             Contadores_Sustituibles_Garantia,
             Contadores_Sin_Garantia,
-            (Contadores_Recepcion + Contadores_Recuperados + Contadores_Sustituibles_Garantia - Contadores_Sin_Garantia) AS Total_Equipos_a_Devolver
+            (Contadores_Recepcion + Contadores_Recuperados + Contadores_Sustituibles_Garantia) AS Total_Equipos_a_Devolver
         FROM (
             SELECT
                 tp.cod_distribuidora,
