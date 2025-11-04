@@ -136,7 +136,14 @@ export default {
         this.playSuccess();
       } catch (error) {
         this.playAlarm();
-        Swal.fire("Error", String(error.response?.data || "Error desconocido"), "error");
+        
+        // Intenta obtener un mensaje legible del backend
+        const mensajeError =
+          error.response?.data?.message ||  // si tu backend usa "message"
+          error.response?.data ||           // si es texto plano
+          "Error desconocido";
+
+        Swal.fire("Error", mensajeError, "error");
       }
     },
 
