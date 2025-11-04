@@ -24,6 +24,9 @@ public interface TProcesosRepository extends JpaRepository<TProcesos, TProcesosI
 
         List<TProcesos> findByIdLote(Integer idLote);
 
+        @Query("SELECT p FROM TProcesos p WHERE p.idLote = :idLote AND p.codDistribuidora = :codDistribuidora")
+        List<TProcesos> findByIdLoteAndCodDistribuidora(Integer idLote, String codDistribuidora);
+
         @Query("SELECT p FROM TProcesos p WHERE p.idContador = :idContador AND p.codDistribuidora = :codDistribuidora")
         Optional<TProcesos> findByIdContadorAndCodDistribuidora(String idContador, String codDistribuidora);
 

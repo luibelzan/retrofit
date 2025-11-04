@@ -123,12 +123,8 @@ public class LotesService {
     }
 
     public List<TProcesos> obtenerContadoresPorLote(String codDistribuidora, Integer idLote) {
-        TLotesId loteId = new TLotesId(codDistribuidora, idLote);
-        TLotes lote = tLotesRepository.findById(loteId)
-                .orElseThrow(() -> new IllegalArgumentException("El lote no existe."));
-
         // Obtener todos los procesos que están asignados al lote
-        List<TProcesos> procesos = tProcesosRepository.findByIdLote(idLote);
+        List<TProcesos> procesos = tProcesosRepository.findByIdLoteAndCodDistribuidora(idLote, codDistribuidora);
 
         if (procesos.isEmpty()) {
             throw new IllegalArgumentException("No hay contadores asignados a este lote.");
