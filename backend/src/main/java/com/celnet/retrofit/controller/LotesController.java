@@ -176,9 +176,10 @@ public class LotesController {
         try {
             // Obtener los contadores del lote
             List<TProcesos> contadores = lotesService.obtenerContadoresPorLote(codDistribuidora, idLote);
+            TLotes lote = lotesService.getLoteById(codDistribuidora, idLote);
 
             // Obtener la descripción del almacén usando el codDistribuidora y codAlmacen
-            String desAlmacen = almacenesService.obtenerDesAlmacen(codDistribuidora, idLote);
+            String desAlmacen = almacenesService.obtenerDesAlmacen(codDistribuidora, lote.getCodAlmacen());
 
             // Generar el archivo Excel con los códigos de barras
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -194,6 +195,7 @@ public class LotesController {
                     .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
                     .body(new InputStreamResource(new ByteArrayInputStream(outStream.toByteArray())));
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.status(500).body(null);
         }
     }

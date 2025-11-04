@@ -360,10 +360,15 @@ export default {
             };
         },
 
-        generarExcel(lote) {
+        async generarExcel(lote) {
             if (!lote || !lote.codDistribuidora || !lote.idLote || !lote.codAlmacen) {
                 Swal.fire("Error", "Lote no válido", "error");
                 return;
+            }
+
+            // Asegurarte de tener la lista de almacenes actual
+            if (!this.almacenes || this.almacenes.length === 0) {
+                await this.cargarAlmacenes(lote.codDistribuidora);
             }
 
             // Obtener el nombre del almacén en base al código

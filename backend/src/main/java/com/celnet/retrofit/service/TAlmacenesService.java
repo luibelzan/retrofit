@@ -41,11 +41,10 @@ public class TAlmacenesService {
     // Nuevo método para obtener la descripción del almacén
     public String obtenerDesAlmacen(String codDistribuidora, Integer codAlmacen) {
         Optional<TAlmacenes> almacen = tAlmacenesRepository.findByIdAndCodDistribuidora(codAlmacen, codDistribuidora);
-        if(almacen.get()!= null) {
-            return almacen.get().getDesAlmacen();
-        } else {
-            return "Desconocido";
-        }
-        //return almacen.get().map(TAlmacenes::getDesAlmacen).orElse("Desconocido");
+
+        return almacen
+                .map(TAlmacenes::getDesAlmacen)
+                .orElse("Desconocido");
     }
+
 }

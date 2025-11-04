@@ -52,8 +52,8 @@ public class LotesService {
 
     // Leer un lote específico por ID compuesto
     public TLotes getLoteById(String codDistribuidora, Integer idLote) {
-        TLotesId loteId = new TLotesId(codDistribuidora, idLote);
-        return tLotesRepository.findById(loteId)
+        //TLotesId loteId = new TLotesId(codDistribuidora, idLote);
+        return tLotesRepository.findByIdLoteAndCodDistribuidora(idLote, codDistribuidora)
                 .orElseThrow(() -> new IllegalArgumentException("El lote no existe."));
     }
 
