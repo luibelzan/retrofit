@@ -7,7 +7,8 @@
         <option value="777">Iberdrola I-DE</option>
         <option value="888">SAGEMCOM</option>
         <option value="999">LANDIS&GYR</option>
-        <option value="666">KAIFA</option>
+        <option value="555">KAIFA</option>
+        <option value="444">Celnet</option>
       </select>
     </div>
 
