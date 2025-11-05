@@ -28,7 +28,17 @@
 
       <div class="mb-3">
         <label for="idContador" class="form-label">ID Contador</label>
-        <input v-model="idContador" type="text" class="form-control" id="idContador" @keyup.enter="validarContador"/>
+        <input
+          v-model="idContador"
+          type="text"
+          class="form-control"
+          id="idContador"
+          ref="idContadorInput"
+          @keydown.enter.prevent="validarContador"
+        />
+      </div>
+
+      <div class="mb-3">
         <button type="button" class="btn btn-primary mt-2" @click="validarContador">Validar Contador</button>
       </div>
 
