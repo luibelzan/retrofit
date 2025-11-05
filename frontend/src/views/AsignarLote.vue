@@ -110,42 +110,47 @@ export default {
       }
     },
     async validarContador() {
-      try {
-        if (!this.idContador) {
-          Swal.fire("Error", "Ingrese el ID del contador", "error");
-          return;
-        }
+  try {
+    if (!this.idContador) {
+      Swal.fire("Error", "Ingrese el ID del contador", "error");
+      return;
+    }
 
-        if(!this.codDistribuidora || !this.idLote) {
-          this.playAlarm();
-          Swal.fire("Error", "Ingrese la distribuidora y el lote", "error");
-          return;
-        }
+    if (!this.codDistribuidora || !this.idLote) {
+      this.playAlarm();
+      Swal.fire("Error", "Ingrese la distribuidora y el lote", "error");
+      return;
+    }
 
-        const response = await axios.post("http://localhost:8080/api/lotes/validarContador", null, {
-          params: {
-            idContador: this.idContador,
-            codDistribuidora: this.codDistribuidora
-          }
-        });
-
-        const idContadorCorregido = response.data.idContador || this.idContador;
-
-        this.contadores.push(idContadorCorregido);
-        this.idContador = "";
-        this.playSuccess();
-      } catch (error) {
-        this.playAlarm();
-        
-        // Intenta obtener un mensaje legible del backend
-        const mensajeError =
-          error.response?.data?.message ||  // si tu backend usa "message"
-          error.response?.data ||           // si es texto plano
-          "Error desconocido";
-
-        Swal.fire("Error", mensajeError, "error");
+    const response = await axios.post("http://localhost:8080/api/lotes/validarContador", null, {
+      params: {
+        idContador: this.idContador,
+        codDistribuidora: this.codDistribuidora
       }
-    },
+    });
+
+    const idContadorCorregido = response.data.idContador || this.idContador;
+    this.contadores.push(idContadorCorregido);
+    this.idContador = "";
+    this.playSuccess();
+
+  } catch (error) {
+    this.playAlarm();
+
+    const mensajeError =
+      error.response?.data?.message ||
+      error.response?.data ||
+      "Error desconocido";
+
+    Swal.fire("Error", mensajeError, "error");
+  } finally {
+    // 👇 siempre devuelve el foco al input
+    this.$nextTick(() => {
+      this.$refs.idContadorInput.focus();
+    });
+  }
+},
+
 
 
     async asignarLote() {
