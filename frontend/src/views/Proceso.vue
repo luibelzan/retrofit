@@ -79,6 +79,21 @@
                             <input type="text" class="form-control mt-1" v-model="filters.idLote"
                                 placeholder="Filtrar...">
                         </th>
+                        <th>
+                            Fecha Proceso
+                            <input type="text" class="form-control mt-1" v-model="filters.fecProceso2"
+                                placeholder="Filtrar...">
+                        </th>
+                        <th>
+                            Contador Sustitucion
+                            <input type="text" class="form-control mt-1" v-model="filters.idContadorSustitucion"
+                                placeholder="Filtrar...">
+                        </th>
+                        <th>
+                            Facturado
+                            <input type="text" class="form-control mt-1" v-model="filters.facturado"
+                                placeholder="Filtrar...">
+                        </th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -87,10 +102,10 @@
                         :key="proceso.codDistribuidora + proceso.idContador + proceso.fecRecepcion">
                         <td>{{ proceso.codDistribuidora }}</td>
                         <td>{{ proceso.idContador }}</td>
-                        <td>{{ formatDate(proceso.fecRecepcion) }}</td>
+                        <td>{{ proceso.fecRecepcion2 ? formatDate(proceso.fecRecepcion2) : formatDate(proceso.fecRecepcion) }}</td>
                         <td>{{ proceso.tipEquipo }}</td>
-                        <td>{{ proceso.tipDiagnostico }}</td>
-                        <td>{{ proceso.codDiagnostico }}</td>
+                        <td>{{ proceso.tipDiagnostico2 }}</td>
+                        <td>{{ proceso.codDiagnostico2 }}</td>
                         <td>{{ proceso.codFabricante }}</td>
                         <td>{{ proceso.codModelo }}</td>
                         <td>{{ proceso.anoFabricacion }}</td>
@@ -99,6 +114,9 @@
                         <td>{{ proceso.desAveria }}</td>
                         <td>{{ proceso.desObservaciones }}</td>
                         <td>{{ proceso.idLote }}</td>
+                        <td>{{ formatDate(proceso.fecProceso2) }}</td>
+                        <td>{{ proceso.idContadorSustitucion }}</td>
+                        <td>{{ proceso.facturado }}</td>
                         <td>
                             <div class="btn-group" role="group">
                                 <button type="button" class="btn btn-info btn-sm"
@@ -197,6 +215,11 @@
                                 <input type="text" id="createDesObservaciones" v-model="newProceso.desObservaciones"
                                     class="form-control" required pattern=".{1,250}" title="Máximo 250 caracteres">
                             </div>
+                            <div class="mb-3">
+                                <label for="createIdLote" class="form-label">Id Lote</label>
+                                <input type="number" id="createDesObservaciones" v-model="newProceso.idLote"
+                                    class="form-control" min="1" title="Numero valido">
+                            </div>
                             <button type="submit" class="btn btn-primary">Crear</button>
                         </form>
                     </div>
@@ -277,7 +300,12 @@
                             <div class="mb-3">
                                 <label for="editDesObservaciones" class="form-label">Observación</label>
                                 <input type="text" id="editDesObservaciones" v-model="currentProceso.desObservaciones"
-                                    class="form-control" required pattern=".{1,250}" title="Máximo 250 caracteres">
+                                    class="form-control" pattern=".{1,250}" title="Máximo 250 caracteres">
+                            </div>
+                            <div class="mb-3">
+                                <label for="editDesObservaciones" class="form-label">Id Lote</label>
+                                <input type="text" id="editIdLote" v-model="currentProceso.idLote"
+                                    class="form-control" min="1" title="Numero valido">
                             </div>
                             <button type="submit" class="btn btn-primary">Actualizar</button>
                         </form>
@@ -317,6 +345,7 @@
 <script>
 import axios from 'axios';
 import { Modal } from 'bootstrap';
+import Swal from 'sweetalert2';
 
 export default {
     data() {
@@ -389,7 +418,8 @@ export default {
                     if (processValue == null) {
                         return false;
                     }
-                    return processValue.toString().toLowerCase().includes(filterValue.toLowerCase());
+                    return filterValue.toLowerCase().includes(processValue.toString().toLowerCase()) ||
+                        processValue.toString().toLowerCase().includes(filterValue.toLowerCase());
                 });
             });
         },

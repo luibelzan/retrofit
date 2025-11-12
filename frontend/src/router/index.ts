@@ -14,6 +14,15 @@ import Proceso from '@/views/Proceso.vue'
 import General from '@/views/General.vue'
 import Lotes from '@/views/Lotes.vue'
 import AsignarLote from '@/views/AsignarLote.vue'
+import ReportesGeneral from '@/views/ReportesGeneral.vue'
+import Estadisticas from '@/views/Estadisticas.vue'
+import Enviados from '@/views/Enviados.vue'
+import AchatarradosFallo from '@/views/AchatarradosFallo.vue'
+import Sustituciones from '@/views/Sustituciones.vue'
+import ReportesRecepcion from '@/views/ReportesRecepcion.vue'
+import ReportesRecuperados from '@/views/ReportesRecuperados.vue'
+import ReportesAchatarrados from '@/views/ReportesAchatarrados.vue'
+import ReportesContadoresPorEnviar from '@/views/ReportesContadoresPorEnviar.vue'
 
 const routes = [
   {
@@ -90,6 +99,51 @@ const routes = [
     path: '/asignar',
     name: 'AsignarLote',
     component: AsignarLote,
+  },
+  {
+    path: '/reportes-general',
+    name: 'ReportesGeneral',
+    component: ReportesGeneral,
+  },
+  {
+    path: '/enviados-lotes',
+    name: 'EnviadosLotes',
+    component: Enviados,
+  },
+  {
+    path: '/achatarrados-fallo',
+    name: 'AchatarradosFallo',
+    component: AchatarradosFallo,
+  },
+  {
+    path: '/sustituciones',
+    name: 'Sustituciones',
+    component: Sustituciones,
+  },
+  {
+    path: '/reportes-recepcion',
+    name: 'ReportesRecepcion',
+    component: ReportesRecepcion,
+  },
+  {
+    path: '/reportes-recuperados',
+    name: 'ReportesRecuperados',
+    component: ReportesRecuperados,
+  },
+  {
+    path: '/reportes-achatarrados',
+    name: 'ReportesAchatarrados',
+    component: ReportesAchatarrados,
+  },
+  {
+    path: '/estadisticas',
+    name: 'Estadisticas',
+    component: Estadisticas,
+  },
+  {
+    path: '/reportes-contadores-por-enviar',
+    name: 'ReportesContadoresPorEnviar',
+    component: ReportesContadoresPorEnviar,
   },
 ]
 

@@ -3,6 +3,19 @@
     <h2>Asignar Lote a Contadores</h2>
 
     <form @submit.prevent="asignarLote">
+
+      <div class="mb-3">
+        <label for="codDistribuidora" class="form-label">Distribuidora</label>
+        <select v-model="codDistribuidora" class="form-select" required @change="cargarLotes">
+          <option disabled value="">Seleccione una opción</option>
+          <option value="777">Iberdrola I-DE</option>
+          <option value="888">SAGEMCOM</option>
+          <option value="999">LANDIS&GYR</option>
+          <option value="555">KAIFA</option>
+          <option value="444">Celnet</option>
+        </select>
+      </div>
+
       <div class="mb-3">
         <label for="idLote" class="form-label">Seleccionar Lote:</label>
         <select v-model="idLote" class="form-select" required>
@@ -14,26 +27,25 @@
       </div>
 
       <div class="mb-3">
-        <label for="codDistribuidora" class="form-label">Distribuidora</label>
-        <select v-model="codDistribuidora" class="form-select" required>
-          <option disabled value="">Seleccione una opción</option>
-          <option value="777">Iberdrola I-DE</option>
-          <option value="888">SAGEMCOM</option>
-          <option value="999">LANDIS&GYR</option>
-          <option value="666">KAIFA</option>
-        </select>
+        <label for="idContador" class="form-label">ID Contador</label>
+        <input
+          v-model="idContador"
+          type="text"
+          class="form-control"
+          id="idContador"
+          ref="idContadorInput"
+          @keydown.enter.prevent="validarContador"
+        />
       </div>
 
       <div class="mb-3">
-        <label for="idContador" class="form-label">ID Contador</label>
-        <input v-model="idContador" type="text" class="form-control" id="idContador" />
         <button type="button" class="btn btn-primary mt-2" @click="validarContador">Validar Contador</button>
       </div>
 
       <ul class="list-group mb-3">
         <li v-for="(contador, index) in contadores" :key="index" class="list-group-item d-flex justify-content-between">
           {{ contador }}
-          <button type="button" class="btn btn-danger btn-sm" @click="eliminarContador(index)">Eliminar</button>
+          <button type="button" class="btn btn-danger btn-sm" @click="eliminarContador(contador)">Eliminar</button>
         </li>
       </ul>
 
@@ -43,8 +55,9 @@
 </template>
 
 <script>
-import axios from "axios";
-import Swal from "sweetalert2";
+import axios from 'axios';
+import { Modal } from 'bootstrap';
+import Swal from 'sweetalert2';
 
 export default {
   data() {
@@ -62,34 +75,92 @@ export default {
     this.cargarLotes();
   },
   methods: {
+
+    playAlarm() {
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = ctx.createOscillator();
+            const gainNode = ctx.createGain();
+
+            oscillator.type = "square"; // tipo de onda
+            oscillator.frequency.setValueAtTime(800, ctx.currentTime); // frecuencia en Hz
+            gainNode.gain.setValueAtTime(0.2, ctx.currentTime); // volumen
+
+            oscillator.connect(gainNode);
+            gainNode.connect(ctx.destination);
+
+            oscillator.start();
+            setTimeout(() => oscillator.stop(), 1000); // dura 1 segundo
+    },
+
+    playSuccess() {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = ctx.createOscillator();
+        const gainNode = ctx.createGain();
+
+        oscillator.type = "sine"; // onda más suave
+        oscillator.frequency.setValueAtTime(600, ctx.currentTime); // tono inicial
+        oscillator.frequency.linearRampToValueAtTime(900, ctx.currentTime + 0.3); // sube el tono
+
+        gainNode.gain.setValueAtTime(0.2, ctx.currentTime); // volumen
+        gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3); // desvanecimiento suave
+
+        oscillator.connect(gainNode);
+        gainNode.connect(ctx.destination);
+
+        oscillator.start();
+        oscillator.stop(ctx.currentTime + 0.3); // duración corta (300ms)
+    },
+
     async cargarLotes() {
       try {
-        const response = await axios.get("http://localhost:8080/api/lotes");
+        const response = await axios.get(`http://localhost:8080/api/lotes/abiertos/${this.codDistribuidora}`);
         this.lotes = response.data;
       } catch (error) {
         this.error = "Error al cargar lotes";
       }
     },
     async validarContador() {
-      try {
-        if (!this.idContador) {
-          Swal.fire("Error", "Ingrese el ID del contador", "error");
-          return;
-        }
+  try {
+    if (!this.idContador) {
+      Swal.fire("Error", "Ingrese el ID del contador", "error");
+      return;
+    }
 
-        const response = await axios.post("http://localhost:8080/api/lotes/validarContador", null, {
-          params: {
-            idContador: this.idContador
-          }
-        });
+    if (!this.codDistribuidora || !this.idLote) {
+      this.playAlarm();
+      Swal.fire("Error", "Ingrese la distribuidora y el lote", "error");
+      return;
+    }
 
-        this.contadores.push(this.idContador);
-        this.idContador = "";
-        Swal.fire("Éxito", "Contador válido y agregado a la lista", "success");
-      } catch (error) {
-        Swal.fire("Error", String(error.response?.data || "Error desconocido"), "error");
+    const response = await axios.post("http://localhost:8080/api/lotes/validarContador", null, {
+      params: {
+        idContador: this.idContador,
+        codDistribuidora: this.codDistribuidora
       }
-    },
+    });
+
+    const idContadorCorregido = response.data.idContador || this.idContador;
+    this.contadores.push(idContadorCorregido);
+    this.idContador = "";
+    this.playSuccess();
+
+  } catch (error) {
+    this.playAlarm();
+
+    const mensajeError =
+      error.response?.data?.message ||
+      error.response?.data ||
+      "Error desconocido";
+
+    Swal.fire("Error", mensajeError, "error");
+  } finally {
+    // 👇 siempre devuelve el foco al input
+    this.$nextTick(() => {
+      this.$refs.idContadorInput.focus();
+    });
+  }
+},
+
 
 
     async asignarLote() {

@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -34,60 +35,50 @@ public class DiagnosticoController {
             @PathVariable String idContador,
             @RequestParam String codDistribuidora
     ) {
-        System.out.println("ID Contador recibido: " + idContador);
-        System.out.println("Código Distribuidora recibido: " + codDistribuidora);
         try {
-            boolean valido = diagnosticoService.validarContador(idContador, codDistribuidora);
-            return ResponseEntity.ok().body(Map.of("valido", valido, "mensaje", "El contador es válido"));
+            TProcesos proceso = diagnosticoService.validarContador(idContador, codDistribuidora);
+            String desAlmacen = diagnosticoService.getDesAlmacenByCodAlmacen(proceso.getCodAlmacen(), proceso.getCodDistribuidora());
+            return ResponseEntity.ok().body(Map.of(
+                "valido", true,
+                "mensaje", "El contador es válido",
+                "idContador", proceso.getIdContador(),
+                "codDistribuidora", proceso.getCodDistribuidora(),
+                "codAlmacen", proceso.getCodAlmacen(),
+                "desAlmacen", desAlmacen,
+                "fecRecepcion", proceso.getFecRecepcion(),
+                "fecRecepcion2", proceso.getFecRecepcion2()
+            ));
         } catch (RuntimeException ex) {
-            System.out.println("Error: " + ex.getMessage());  // Log para ver el mensaje de error
-            return ResponseEntity.badRequest().body(Map.of("valido", false, "mensaje", ex.getMessage()));
+            return ResponseEntity.badRequest().body(Map.of(
+                "valido", false,
+                "mensaje", ex.getMessage()
+            ));
         }
     }
 
+
     @PostMapping("/enviar")
-    public ResponseEntity<?> actualizarProcesos(
-            @RequestBody Map<String, Object> requestData) {  // Usamos Map para recibir los datos
+    public ResponseEntity<?> actualizarProcesos(@RequestBody Map<String,Object> requestData) {
+        List<Map<String, Object>> contadores = (List<Map<String, Object>>) requestData.get("ids");
+        String tipDiagnostico = (String) requestData.get("tipDiagnostico");
 
-        List<Map<String, Object>> idsRaw = (List<Map<String, Object>>) requestData.get("ids");  // Obtener los datos de 'ids' como una lista de Mapas
-        Object codDiagnosticoObj = requestData.get("codDiagnostico");  // Obtener el código de diagnóstico (como Object)
+        List<TProcesos> procesosActualizados = new ArrayList<>();
+        for (Map<String, Object> c : contadores) {
+            String idContador = (String) c.get("idContador");
+            String codDistribuidora = (String) c.get("codDistribuidora");
+            Integer codDiagnostico = Integer.parseInt(c.get("codDiagnostico").toString());
 
-        // Verificar si el código de diagnóstico es un número entero (String o Integer)
-        Integer codDiagnostico = null;
-        if (codDiagnosticoObj instanceof String) {
-            try {
-                codDiagnostico = Integer.parseInt((String) codDiagnosticoObj);  // Convertir a entero
-            } catch (NumberFormatException e) {
-                return ResponseEntity.badRequest().body(Map.of("mensaje", "Código de diagnóstico inválido"));
-            }
-        } else if (codDiagnosticoObj instanceof Integer) {
-            codDiagnostico = (Integer) codDiagnosticoObj;  // Ya es un entero
+            procesosActualizados.add(
+                diagnosticoService.actualizarProceso(idContador, codDistribuidora, codDiagnostico, tipDiagnostico)
+            );
         }
 
-        if (codDiagnostico == null) {
-            return ResponseEntity.badRequest().body(Map.of("mensaje", "Código de diagnóstico inválido"));
-        }
-
-        // Convertir los mapas a instancias de TProcesosId
-        List<TProcesosId> ids = idsRaw.stream()
-                .map(idMap -> {
-                    TProcesosId tProcesosId = new TProcesosId();
-                    tProcesosId.setIdContador((String) idMap.get("idContador"));
-                    tProcesosId.setCodDistribuidora((String) idMap.get("codDistribuidora"));
-                    return tProcesosId;
-                })
-                .collect(Collectors.toList());
-
-        // Pasamos los parámetros a la lógica del servicio
-        List<TProcesos> procesosActualizados = diagnosticoService.actualizarProcesosMasivos(ids, codDiagnostico);
-
-        // Verificar si la lista de procesos actualizados está vacía
         if (procesosActualizados.isEmpty()) {
             return ResponseEntity.badRequest().body(Map.of("mensaje", "No se actualizaron procesos"));
         }
-
         return ResponseEntity.ok(procesosActualizados);
     }
+
 
     @GetMapping("/distribuidoras")
     public List<TDistribuidoras> obtenerDistribuidoras() {

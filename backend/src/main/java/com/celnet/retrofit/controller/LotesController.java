@@ -14,8 +14,11 @@ import org.springframework.core.io.InputStreamResource;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.net.ResponseCache;
 import java.util.Arrays;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.celnet.retrofit.service.TAlmacenesService;
 
@@ -50,8 +53,30 @@ public class LotesController {
     // Obtener todos los lotes
     @GetMapping
     public ResponseEntity<List<TLotes>> getAllLotes() {
-        List<TLotes> lotes = lotesService.getAllLotes();
+        List<TLotes> lotes = lotesService.getOpenedLotes();
         return ResponseEntity.ok(lotes);
+    }
+
+    //Obtener lotes cerrados
+    @GetMapping("/cerrados")
+    public ResponseEntity<List<TLotes>> getClosedLotes() {
+        try {
+            List<TLotes> lotes = lotesService.getClosedLotes();
+            return ResponseEntity.ok(lotes);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(null);
+        }
+    }
+
+    // Obtener lotes abiertos filtrados por codDistribuidora
+    @GetMapping("/abiertos/{codDistribuidora}")
+    public ResponseEntity<List<TLotes>> getOpenedLotesByDistribuidora(@PathVariable String codDistribuidora) {
+        try {
+            List<TLotes> lotes = lotesService.getOpenedLotesByDistribuidora(codDistribuidora);
+            return ResponseEntity.ok(lotes);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(null);
+        }
     }
 
     // Obtener un lote por ID compuesto
@@ -76,6 +101,16 @@ public class LotesController {
         }
     }
 
+    @PutMapping("/{codDistribuidora}/{idLote}/cerrar")
+    public ResponseEntity<TLotes> cerrarLote(@PathVariable String codDistribuidora, @PathVariable Integer idLote) {
+        try {
+            TLotes loteCerrado = lotesService.cerrarLote(codDistribuidora, idLote);
+            return ResponseEntity.ok(loteCerrado);
+        } catch(IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(null);
+        }
+    }
+
     // Eliminar un lote por ID compuesto
     @DeleteMapping("/{codDistribuidora}/{idLote}")
     public ResponseEntity<Void> deleteLote(@PathVariable String codDistribuidora, @PathVariable Integer idLote) {
@@ -89,14 +124,26 @@ public class LotesController {
 
     // Validar un contador antes de añadirlo al lote
     @PostMapping("/validarContador")
-    public ResponseEntity<String> validarContador(@RequestParam("idContador") String idContador) {
+    public ResponseEntity<Map<String, String>> validarContador(@RequestParam("idContador") String idContador, @RequestParam("codDistribuidora") String codDistribuidora) {
+        Map<String, String> response = new HashMap<>();
         try {
-            lotesService.validarContadorRecepcionado(idContador);
-            return ResponseEntity.ok("Contador válido");
+            String idContadorFixed;
+
+            if (idContador.endsWith("ME") && idContador.length() == 20) {
+                idContadorFixed = idContador.substring(0, idContador.length() - 2);
+            } else {
+                idContadorFixed = idContador;
+            }
+
+            lotesService.validarContadorRecepcionado(idContadorFixed, codDistribuidora);
+            response.put("message", "Contador válido");
+            response.put("idContador", idContadorFixed);
+            return ResponseEntity.ok(response);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }
     }
+
 
     // Asignar lote a los contadores seleccionados
     @PostMapping("/asignar")
@@ -129,9 +176,10 @@ public class LotesController {
         try {
             // Obtener los contadores del lote
             List<TProcesos> contadores = lotesService.obtenerContadoresPorLote(codDistribuidora, idLote);
+            TLotes lote = lotesService.getLoteById(codDistribuidora, idLote);
 
             // Obtener la descripción del almacén usando el codDistribuidora y codAlmacen
-            String desAlmacen = almacenesService.obtenerDesAlmacen(codDistribuidora, idLote);
+            String desAlmacen = almacenesService.obtenerDesAlmacen(codDistribuidora, lote.getCodAlmacen());
 
             // Generar el archivo Excel con los códigos de barras
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -147,6 +195,7 @@ public class LotesController {
                     .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
                     .body(new InputStreamResource(new ByteArrayInputStream(outStream.toByteArray())));
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.status(500).body(null);
         }
     }

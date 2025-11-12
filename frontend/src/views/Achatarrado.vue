@@ -33,7 +33,7 @@
       <div class="form-group mb-3">
         <label for="idContador">ID Contador</label>
         <input type="text" id="idContador" class="form-control" v-model="idContador" required
-          @keyup.enter="agregarContador" pattern="^[a-zA-Z0-9]{18}$" maxlength="18"
+          @keyup.enter="agregarContador" pattern="^[a-zA-Z0-9]{18, 20}$" maxlength="20"
           title="Debe contener exactamente 18 caracteres alfanuméricos (letras y números, sin espacios ni caracteres especiales)" />
       </div>
 
@@ -56,6 +56,27 @@
         </div>
 
         <div>
+          <p>Codigo Almacen: <strong>{{ contador.codAlmacen }}</strong></p>
+          <p>Almacen: <strong>{{ contador.desAlmacen }}</strong></p>
+          <p>Fecha Recepcion: <strong>{{ new Date(contador.fecRecepcion2).toLocaleDateString('es-ES') }}</strong></p>
+        </div>
+
+        <!-- Selección de nuevo diagnóstico -->
+        <div class="d-flex align-items-center mx-3">
+          <label class="me-2">Reasignar</label>
+          <select v-model="contador.nuevoCodDiagnostico" class="form-select me-2">
+            <option value="">Seleccione un código de diagnóstico</option>
+            <option v-for="diag in diagnosticos" :key="diag.codDiagnostico" :value="diag.codDiagnostico">
+              {{ diag.desDiagnostico }}
+            </option>
+          </select>
+          <button class="btn btn-success" @click="reasignarDiagnostico(index)"
+            :disabled="!contador.nuevoCodDiagnostico">
+            Confirmar
+          </button>
+        </div>
+
+        <div>
           <button class="btn btn-danger" @click="eliminarContador(index)">Eliminar</button>
         </div>
       </div>
@@ -69,7 +90,9 @@
 </template>
 
 <script>
-import Swal from "sweetalert2";
+import axios from 'axios';
+import { Modal } from 'bootstrap';
+import Swal from 'sweetalert2';
 
 export default {
   data() {
@@ -80,9 +103,46 @@ export default {
       codDiagnostico: "",
       idContador: "",
       contadores: [],
+      codAlmacen: "",
+      desAlmacen: "",
+      fecRecepcion: "",
+      fecRecepcion2: "",
     };
   },
   methods: {
+    playAlarm() {
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = ctx.createOscillator();
+            const gainNode = ctx.createGain();
+
+            oscillator.type = "square"; // tipo de onda
+            oscillator.frequency.setValueAtTime(800, ctx.currentTime); // frecuencia en Hz
+            gainNode.gain.setValueAtTime(0.2, ctx.currentTime); // volumen
+
+            oscillator.connect(gainNode);
+            gainNode.connect(ctx.destination);
+
+            oscillator.start();
+            setTimeout(() => oscillator.stop(), 1000); // dura 1 segundo
+    },
+    playSuccess() {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = ctx.createOscillator();
+        const gainNode = ctx.createGain();
+
+        oscillator.type = "sine"; // onda más suave
+        oscillator.frequency.setValueAtTime(600, ctx.currentTime); // tono inicial
+        oscillator.frequency.linearRampToValueAtTime(900, ctx.currentTime + 0.3); // sube el tono
+
+        gainNode.gain.setValueAtTime(0.2, ctx.currentTime); // volumen
+        gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3); // desvanecimiento suave
+
+        oscillator.connect(gainNode);
+        gainNode.connect(ctx.destination);
+
+        oscillator.start();
+        oscillator.stop(ctx.currentTime + 0.3); // duración corta (300ms)
+    },
     async fetchData() {
       try {
         const resDistribuidoras = await fetch("http://localhost:8080/api/achatarrado/distribuidoras");
@@ -94,34 +154,41 @@ export default {
         console.error("Error cargando datos:", error);
       }
     },
-    async validarContador() {
+    async agregarContador() {
       const url = `http://localhost:8080/api/achatarrado/validar/${this.idContador}?codDistribuidora=${this.codDistribuidora}`;
       const response = await fetch(url);
       const result = await response.json();
 
-      if (!response.ok) {
-        throw new Error(result.mensaje || "Error desconocido");
-      }
-      return result;
-    },
-    async agregarContador() {
-      if (this.idContador && this.codDistribuidora && this.codDiagnostico) {
+      if(!response.ok) {
+        this.playAlarm();
+        Swal.fire({
+          icon: "warning",
+          title: "Error al validar contador",
+          text: result.mensaje,
+        });
+        //throw new Error(result.mensaje || "Error desconocido");
+      } else {
         try {
+          // Eliminar sufijo 'ME' si tiene longitud 20 y termina en 'ME'
+          let idContadorProcesado = this.idContador;
+          if (idContadorProcesado.length === 20 && idContadorProcesado.endsWith("ME")) {
+            idContadorProcesado = idContadorProcesado.slice(0, -2);
+          }
+
           this.contadores.push({
-            idContador: this.idContador,
+            idContador: idContadorProcesado,
             codDistribuidora: this.codDistribuidora,
             codDiagnostico: this.codDiagnostico,
+            codAlmacen: result.codAlmacen,
+            desAlmacen: result.desAlmacen,
+            fecRecepcion: result.fecRecepcion,
+            fecRecepcion2: result.fecRecepcion2,
           });
           this.idContador = "";
-
-          Swal.fire({
-            icon: "success",
-            title: "Contador Añadido",
-            text: "El contador se agregó correctamente.",
-            timer: 1000,
-            showConfirmButton: false,
-          });
+          this.playSuccess();
+        
         } catch (error) {
+          this.playAlarm();
           Swal.fire({
             icon: "error",
             title: "Error",
@@ -132,6 +199,28 @@ export default {
     },
     eliminarContador(index) {
       this.contadores.splice(index, 1);
+    },
+    reasignarDiagnostico(index) { 
+      const contador = this.contadores[index];
+      if (!contador.nuevoCodDiagnostico) {
+        Swal.fire({
+          icon: "warning",
+          title: "Seleccione un diagnóstico",
+          text: "Debe seleccionar un nuevo código de diagnóstico antes de reasignar.",
+        });
+        return;
+      }
+
+      contador.codDiagnostico = contador.nuevoCodDiagnostico;
+      contador.nuevoCodDiagnostico = "";
+
+      Swal.fire({
+        icon: "success",
+        title: "Reasignado",
+        text: "El código de diagnóstico ha sido reasignado.",
+        timer: 1000,
+        showConfirmButton: false,
+      });
     },
     async enviarContadores() {
       try {
@@ -144,8 +233,9 @@ export default {
             ids: this.contadores.map((c) => ({
               idContador: c.idContador,
               codDistribuidora: c.codDistribuidora,
+              codDiagnostico: c.codDiagnostico,
             })),
-            codDiagnostico: this.codDiagnostico,
+            tipDiagnostico: "CH"
           }),
         });
 

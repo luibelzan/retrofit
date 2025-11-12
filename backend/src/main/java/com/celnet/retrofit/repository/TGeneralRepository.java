@@ -28,4 +28,7 @@ public interface TGeneralRepository extends JpaRepository<TGeneral, TGeneralId> 
             "WHERE tg.codDistribuidora = :codDistribuidora " +
             "AND tg.idContador NOT IN (SELECT tp.idContador FROM TProcesos tp)")
     Long countPendientes(@Param("codDistribuidora") String codDistribuidora);
+
+    @Query("SELECT p FROM TGeneral p WHERE p.idContador = :idContador AND p.codDistribuidora = :codDistribuidora")
+    Optional<TGeneral> findByIdContadorAndCodDistribuidora(String idContador, String codDistribuidora);
 }

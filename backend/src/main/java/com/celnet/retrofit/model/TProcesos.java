@@ -48,17 +48,34 @@ public class TProcesos {
     private String desObservaciones;
 
     @Column(name = "tip_diagnostico", length = 2)
-    private String tipDiagnostico = "RC";  // Valor por defecto "RC"
+    private String tipDiagnostico = "RC"; // Valor por defecto "RC"
 
     @Column(name = "cod_diagnostico")
-    private Integer codDiagnostico = 30;  // Valor por defecto 30
+    private Integer codDiagnostico = 30; // Valor por defecto 30
 
-    @Column(name = "id_lote")
+    @Column(name = "id_lote", nullable=true)
     private Integer idLote;
 
     @Column(name = "fec_proceso")
     @Temporal(TemporalType.DATE)
     private Date fecProceso;
+
+    @Column(name = "fec_recepcion2", nullable=true)
+    @Temporal(TemporalType.DATE)
+    private Date fecRecepcion2;
+
+    @Column(name = "fec_proceso2", nullable=true)
+    @Temporal(TemporalType.DATE)
+    private Date fecProceso2;
+
+    @Column(name = "tip_diagnostico2", length = 2, nullable=true)
+    private String tipDiagnostico2;
+
+    @Column(name = "cod_diagnostico2", nullable=true)
+    private Integer codDiagnostico2;
+
+    @Column(name = "id_contador_sust", nullable = true)
+    private String idContadorSust;
 
     // Getters y Setters
 
@@ -180,5 +197,45 @@ public class TProcesos {
 
     public void setFecProceso(Date fecProceso) {
         this.fecProceso = fecProceso;
+    }
+
+    public Date getFecRecepcion2() {
+        return fecRecepcion2;
+    }
+
+    public void setFecRecepcion2(Date fecRecepcion2) {
+        this.fecRecepcion2 = fecRecepcion2;
+    }
+
+    public Date getFecProceso2() {
+        return fecProceso2;
+    }
+
+    public void setFecProceso2(Date fecProceso2) {
+        this.fecProceso2 = fecProceso2;
+    }
+
+    public String getTipDiagnostico2() {
+        return tipDiagnostico2;
+    }
+
+    public void setTipDiagnostico2(String tipDiagnostico2) {
+        this.tipDiagnostico2 = tipDiagnostico2;
+    }
+
+    public Integer getCodDiagnostico2() {
+        return codDiagnostico2;
+    }
+
+    public void setCodDiagnostico2(Integer codDiagnostico2) {
+        this.codDiagnostico2 = codDiagnostico2;
+    }
+
+    public String getIdContadorSust() {
+        return idContadorSust;
+    }
+
+    public void setIdContadorSust(String idContadorSust) {
+        this.idContadorSust = idContadorSust;   
     }
 }

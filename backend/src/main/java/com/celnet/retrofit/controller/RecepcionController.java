@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.celnet.retrofit.model.TAlmacenes;
 
 import java.util.HashMap;
 import java.util.List;
@@ -18,22 +19,35 @@ public class RecepcionController {
     @Autowired
     private RecepcionService recepcionService;
 
-    @PostMapping("/comprobar")
-    public ResponseEntity<Map<String, String>> comprobarRecepcion(@RequestBody Map<String, String> datos) throws Exception {
-        String distribuidora = datos.get("distribuidora");
-        String tipoEquipo = datos.get("tipoEquipo");
-        String almacen = datos.get("almacen");
-        String codigoBarras = datos.get("codigoBarras");
-
-        // Aquí se hace la comprobación
-        String message = recepcionService.procesarRecepcion(distribuidora, tipoEquipo, almacen, codigoBarras);
-
-        // Devolvemos el mensaje tal cual, no modificamos el mensaje aquí
+   @PostMapping("/comprobar")
+    public ResponseEntity<Map<String, String>> comprobarRecepcion(@RequestBody Map<String, String> datos) {
         Map<String, String> response = new HashMap<>();
-        response.put("message", message);
+        try {
+            String distribuidora = datos.get("distribuidora");
+            String tipoEquipo = datos.get("tipoEquipo");
+            String almacen = datos.get("almacen");
+            String codigoBarras = datos.get("codigoBarras");
 
-        return ResponseEntity.ok(response);
+            String codigoBarrasFixed;
+            if (codigoBarras.endsWith("ME") && codigoBarras.length() == 20) {
+                codigoBarrasFixed = codigoBarras.substring(0, codigoBarras.length() - 2);
+            } else {
+                codigoBarrasFixed = codigoBarras;
+            }
+
+            String message = recepcionService.procesarRecepcion(distribuidora, tipoEquipo, almacen, codigoBarrasFixed);
+
+            response.put("message", message);
+            response.put("codigoBarras", codigoBarrasFixed);
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            response.put("message", e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
     }
+
+
 
     @PostMapping("/enviar")
     public ResponseEntity<Map<String, Object>> enviarRecepcion(@RequestBody List<Map<String, String>> registros) {
@@ -72,4 +86,11 @@ public class RecepcionController {
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @GetMapping("/almacenes")
+    public ResponseEntity<List<TAlmacenes>> obtenerAlmacenesPorDistribuidora(@RequestParam String codDistribuidora) {
+        List<TAlmacenes> almacenes = recepcionService.obtenerAlmacenesPorDistribuidora(codDistribuidora);
+        return ResponseEntity.ok(almacenes);
+    }
+
 }

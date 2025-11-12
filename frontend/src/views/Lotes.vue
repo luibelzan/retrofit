@@ -1,7 +1,17 @@
 <template>
     <div class="container mt-3">
         <h1 class="text-center mb-3">Gestión de Lotes</h1>
-        <button class="btn btn-primary mb-3" @click="abrirModalCrear">Crear Nuevo Lote</button>
+        <div class="d-flex justify-content-between mb-3">
+            <button class="btn btn-primary" @click="abrirModalCrear">Crear Nuevo Lote</button>
+            <button 
+                class="btn"
+                :class="mostrarCerrados ? 'btn-success' : 'btn-outline-secondary'"
+                @click="toggleMostrarCerrados">
+                {{ mostrarCerrados ? "Ocultar lotes cerrados" : "Mostrar lotes cerrados" }}
+            </button>
+        </div>
+
+
 
         <!-- Tabla de lotes -->
         <div class="table-responsive">
@@ -17,7 +27,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="lote in lotes" :key="lote.idLote">
+                    <tr v-for="lote in paginatedLotes" :key="lote.idLote">
                         <td>{{ lote.idLote }}</td>
                         <td>{{ lote.codDistribuidora }}</td>
                         <td>{{ lote.nomLote }}</td>
@@ -28,11 +38,27 @@
                                 <button class="btn btn-info btn-sm" @click="abrirModalVer(lote)">Ver</button>
                                 <button class="btn btn-warning btn-sm" @click="abrirModalEditar(lote)">Editar</button>
                                 <button class="btn btn-danger btn-sm" @click="eliminarLote(lote)">Eliminar</button>
+                                <button 
+                                    v-if="!mostrarCerrados" 
+                                    class="btn btn-low-danger btn-sm" 
+                                    @click="cerrarLote(lote)">
+                                    Cerrar
+                                </button>
+
                             </div>
                         </td>
                     </tr>
                 </tbody>
             </table>
+        </div>
+
+        <!-- Paginación -->
+        <div class="d-flex justify-content-center mt-3">
+            <button class="btn btn-primary" :disabled="currentPage === 1"
+                @click="changePage(currentPage - 1)">Anterior</button>
+            <span class="mx-3">Página {{ currentPage }} de {{ totalPages }}</span>
+            <button class="btn btn-primary" :disabled="currentPage === totalPages"
+                @click="changePage(currentPage + 1)">Siguiente</button>
         </div>
 
         <!-- Modal Crear Lote -->
@@ -52,8 +78,13 @@
                                 <input v-model="nuevoLote.idLote" class="form-control" required />
                             </div>
                             <div class="mb-3">
-                                <label>Código Distribuidora</label>
-                                <input v-model="nuevoLote.codDistribuidora" class="form-control" required />
+                                <label for="distribuidora">Distribuidora</label>
+                                <select id="distribuidora" class="form-select" v-model="nuevoLote.codDistribuidora" 
+                                        @change="cargarAlmacenes(nuevoLote.codDistribuidora)" required>
+                                    <option v-for="dist in distribuidoras" :key="dist.codDistribuidora" :value="dist.codDistribuidora">
+                                        {{ dist.nomDistribuidora }}
+                                    </option>
+                                </select>
                             </div>
                             <div class="mb-3">
                                 <label>Nombre del Lote</label>
@@ -61,7 +92,11 @@
                             </div>
                             <div class="mb-3">
                                 <label>Código Almacén</label>
-                                <input v-model="nuevoLote.codAlmacen" class="form-control" required />
+                                <select id="almacen" class="form-select" v-model="nuevoLote.codAlmacen" required>
+                                    <option v-for="dist in almacenes" :key="dist.codAlmacen" :value="dist.codAlmacen">
+                                        {{ dist.desAlmacen }}
+                                    </option>
+                                </select>
                             </div>
                             <div class="mb-3">
                                 <label>Fecha</label>
@@ -119,7 +154,11 @@
                             </div>
                             <div class="mb-3">
                                 <label>Código Almacén</label>
-                                <input v-model="loteActual.codAlmacen" class="form-control" required />
+                                <select class="form-select" v-model="loteActual.codAlmacen" required>
+                                    <option v-for="alm in almacenes" :key="alm.codAlmacen" :value="alm.codAlmacen">
+                                        {{ alm.desAlmacen }}
+                                    </option>
+                                </select>
                             </div>
                             <div class="mb-3">
                                 <label>Fecha del Lote</label>
@@ -135,12 +174,20 @@
 </template>
 
 <script>
+import axios from 'axios';
+import { Modal } from 'bootstrap';
+import Swal from 'sweetalert2';
 
 export default {
     data() {
         return {
             lotes: [],
+            mostrarCerrados: false,
+            currentPage: 1,
+            pageSize: 10,
+            totalPages: 1,
             almacenes: [],
+            distribuidoras: [],
             nuevoLote: {
                 idLote: "",
                 codDistribuidora: "",
@@ -160,20 +207,56 @@ export default {
             modalVerVisible: false,
         };
     },
+    computed: {
+        paginatedLotes() {
+            const start = (this.currentPage - 1) * this.pageSize;
+            const end = start + this.pageSize;
+            return this.lotes.slice(start, end);
+        },
+    },
     mounted() {
         this.fetchLotes();
         this.cargarAlmacenes();
+        this.fetchData();
     },
     methods: {
+        toggleMostrarCerrados() {
+            this.mostrarCerrados = !this.mostrarCerrados;
+            this.fetchLotes();
+        },
         fetchLotes() {
+            const url = this.mostrarCerrados
+            ? "http://localhost:8080/api/lotes/cerrados"
+            : "http://localhost:8080/api/lotes";
+            
             axios
-                .get("http://localhost:8080/api/lotes")
-                .then((response) => {
-                    this.lotes = response.data;
-                })
-                .catch((error) => {
-                    console.error("Error al obtener los lotes:", error);
-                });
+            .get(url)
+            .then((response) => {
+                this.lotes = response.data;
+                this.totalPages = Math.ceil(this.lotes.length / this.pageSize);
+                if (this.currentPage > this.totalPages) {
+                    this.currentPage = this.totalPages || 1;
+                }
+            })
+            .catch((error) => {
+                console.error("Error al obtener los lotes:", error);
+            });
+        },
+        async fetchData() {
+            try {
+                const resDistribuidoras = await fetch("http://localhost:8080/api/achatarrado/distribuidoras");
+                this.distribuidoras = await resDistribuidoras.json();
+            } catch (error) {
+                console.error("Error cargando datos:", error);
+            }
+        },
+        async cargarAlmacenes(codDistribuidora) {
+            try {
+                const response = await axios.get(`http://localhost:8080/api/recepcion/almacenes?codDistribuidora=${codDistribuidora}`)
+                this.almacenes = response.data;
+            } catch (error) {
+                Swal.fire("Error", "Error al cargar los almacenes.", "error");
+            }
         },
         formatoFecha(fecha) {
             if (!fecha) return "";
@@ -199,9 +282,11 @@ export default {
             this.loteActual = { ...lote };
             this.modalVerVisible = true;
         },
-        abrirModalEditar(lote) {
+        async abrirModalEditar(lote) {
             this.loteActual = { ...lote };
             this.modalEditarVisible = true;
+            // Cargar almacenes para la distribuidora de este lote
+            await this.cargarAlmacenes(this.loteActual.codDistribuidora);
         },
         editarLote() {
             axios
@@ -214,6 +299,28 @@ export default {
                 .catch(() => {
                     Swal.fire("Error", "Hubo un error al actualizar el lote", "error");
                 });
+        },
+        cerrarLote(lote) {
+            Swal.fire({
+                title: "¿Cerrar lote?",
+                text: "No podrás modificarlo después de cerrarlo.",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Sí, cerrar",
+                cancelButtonText: "Cancelar",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    axios
+                        .put(`http://localhost:8080/api/lotes/${lote.codDistribuidora}/${lote.idLote}/cerrar`)
+                        .then(() => {
+                            this.fetchLotes();
+                            Swal.fire("Cerrado", "El lote fue cerrado correctamente", "success");
+                        })
+                        .catch(() => {
+                            Swal.fire("Error", "Hubo un error al cerrar el lote", "error");
+                        });
+                }
+            });
         },
         eliminarLote(lote) {
             Swal.fire({
@@ -253,10 +360,15 @@ export default {
             };
         },
 
-        generarExcel(lote) {
+        async generarExcel(lote) {
             if (!lote || !lote.codDistribuidora || !lote.idLote || !lote.codAlmacen) {
                 Swal.fire("Error", "Lote no válido", "error");
                 return;
+            }
+
+            // Asegurarte de tener la lista de almacenes actual
+            if (!this.almacenes || this.almacenes.length === 0) {
+                await this.cargarAlmacenes(lote.codDistribuidora);
             }
 
             // Obtener el nombre del almacén en base al código
@@ -282,16 +394,7 @@ export default {
                 });
         },
 
-        cargarAlmacenes() {
-            axios
-                .get("http://localhost:8080/api/almacenes") 
-                .then((response) => {
-                    this.almacenes = response.data;
-                })
-                .catch((error) => {
-                    Swal.fire("Error", "Error al cargar los almacenes.", "error");
-                });
-        },
+        
 
 
         getAlmacenNombre(codigoAlmacen) {
@@ -301,6 +404,11 @@ export default {
 
             const almacen = this.almacenes.find(alm => alm.codAlmacen === codigoAlmacen);
             return almacen ? almacen.desAlmacen : "Almacén no encontrado";
+        },
+
+        changePage(page) {
+            if (page < 1 || page > this.totalPages) return;
+            this.currentPage = page;
         },
 
     },
@@ -376,6 +484,17 @@ export default {
 .btn-danger:hover {
     background-color: #ff7979;
     border-color: #ff7979;
+}
+
+.btn-low-danger {
+    border-radius: 25px;
+    background-color: orange;
+    border-color: orange;
+}
+
+.btn-low-danger:hover {
+    background-color: #f3ad44;
+    border-color: #f3ad44;
 }
 
 .modal.show {

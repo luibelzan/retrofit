@@ -17,6 +17,8 @@
                     <option value="777">Iberdrola I-DE</option>
                     <option value="888">SAGEMCOM</option>
                     <option value="999">LANDIS&GYR</option>
+                    <option value="555">KAIFA</option>
+                    <option value="444">Celnet</option>
                 </select>
             </div>
 
@@ -95,6 +97,9 @@
 </template>
 
 <script>
+import axios from 'axios';
+import { Modal } from 'bootstrap';
+import Swal from 'sweetalert2';
 
 export default {
     name: "RecepcionRegistros",
@@ -111,32 +116,82 @@ export default {
         };
     },
     methods: {
+
+        playAlarm() {
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = ctx.createOscillator();
+            const gainNode = ctx.createGain();
+
+            oscillator.type = "square"; // tipo de onda
+            oscillator.frequency.setValueAtTime(800, ctx.currentTime); // frecuencia en Hz
+            gainNode.gain.setValueAtTime(0.2, ctx.currentTime); // volumen
+
+            oscillator.connect(gainNode);
+            gainNode.connect(ctx.destination);
+
+            oscillator.start();
+            setTimeout(() => oscillator.stop(), 1000); // dura 1 segundo
+    },
+
+    playSuccess() {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = ctx.createOscillator();
+        const gainNode = ctx.createGain();
+
+        oscillator.type = "sine"; // onda más suave
+        oscillator.frequency.setValueAtTime(600, ctx.currentTime); // tono inicial
+        oscillator.frequency.linearRampToValueAtTime(900, ctx.currentTime + 0.3); // sube el tono
+
+        gainNode.gain.setValueAtTime(0.2, ctx.currentTime); // volumen
+        gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3); // desvanecimiento suave
+
+        oscillator.connect(gainNode);
+        gainNode.connect(ctx.destination);
+
+        oscillator.start();
+        oscillator.stop(ctx.currentTime + 0.3); // duración corta (300ms)
+    },
+
         async cargarAlmacenes() {
             const { distribuidora } = this.formData;
             try {
-                const response = await axios.get(`http://localhost:8080/api/almacenes?codDistribuidora=${distribuidora}`);
+                const response = await axios.get(`http://localhost:8080/api/recepcion/almacenes?codDistribuidora=${distribuidora}`)
                 this.almacenes = response.data;
+                console.log(`Total de almacenes para distribuidora ${distribuidora}:`, this.almacenes.length);
             } catch (error) {
                 Swal.fire("Error", "Error al cargar los almacenes.", "error");
             }
         },
         comprobarRecepcion() {
-            const registro = { ...this.formData };
+    const registro = { ...this.formData };
 
-            axios
-                .post("http://localhost:8080/api/recepcion/comprobar", registro)
-                .then((response) => {
-                    this.registros.push({
-                        ...registro,
-                        nuevoAlmacen: registro.almacen,
-                        estado: response.data.message,
-                    });
-                    this.formData.codigoBarras = '';
-                })
-                .catch(() => {
-                    Swal.fire("Error", "Error al comprobar el registro.", "error");
-                });
-        },
+    axios
+        .post("http://localhost:8080/api/recepcion/comprobar", registro)
+        .then((response) => {
+            const codigoBarrasCorregido = response.data.codigoBarras || registro.codigoBarras;
+
+            this.registros.push({
+                ...registro,
+                codigoBarras: codigoBarrasCorregido,
+                nuevoAlmacen: registro.almacen,
+                estado: response.data.message,
+            });
+
+            this.playSuccess();
+
+            // Actualizar el input con el código corregido (por si el usuario lo vuelve a usar o editar)
+            //this.formData.codigoBarras = codigoBarrasCorregido;
+
+            // Si quieres limpiarlo en lugar de dejar el corregido, descomenta la siguiente línea:
+            this.formData.codigoBarras = '';
+        })
+        .catch((error) => {
+            const mensaje = error.response?.data?.message || "Error al comprobar el registro.";
+            this.playAlarm();
+            Swal.fire("Error", mensaje, "error");
+        });
+},
+
         reasignarAlmacen(index) {
             const registro = this.registros[index];
             if (!registro.nuevoAlmacen) {
@@ -184,16 +239,21 @@ export default {
                     Swal.fire("Éxito", "Registros enviados exitosamente.", "success");
                     this.registros = [];
                 })
-                .catch(() => {
-                    Swal.fire("Error", "Error al enviar los registros.", "error");
-                });
+                .catch(error => {
+        // Revisa si el backend devolvió un JSON con message
+        const mensaje = error.response?.data?.message 
+                        || error.message 
+                        || "Error al enviar los registros.";
+        Swal.fire("Error", mensaje, "error");
+        console.error(error); // Para ver todo el error en la consola
+    });
         },
         getAlmacenNombre(codigoAlmacen) {
             const almacen = this.almacenes.find(alm => alm.codAlmacen === codigoAlmacen);
             return almacen ? almacen.desAlmacen : "Almacén no encontrado";
         },
         getEstadoClass(estado) {
-            if (estado === "Este contador ya ha sido recepcionado previamente, revíselo antes de continuar.") {
+            if (estado.includes("Este contador ya ha sido recepcionado previamente, revíselo antes de continuar") || estado.includes("Este contador ya ha sido recepcionado y procesado previamente")) {
                 return 'estado-warning';
             } else if (estado === "Contador veríficado correctamente.") {
                 return 'estado-success';

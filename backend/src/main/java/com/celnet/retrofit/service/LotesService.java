@@ -27,6 +27,8 @@ public class LotesService {
         if (tLotesRepository.existsById(new TLotesId(lote.getCodDistribuidora(), lote.getIdLote()))) {
             throw new IllegalArgumentException("El lote ya existe.");
         }
+        lote.setEstadoLote("A");
+
         return tLotesRepository.save(lote);
     }
 
@@ -35,23 +37,43 @@ public class LotesService {
         return tLotesRepository.findAll();
     }
 
+    // Leer todos los lotes
+    public List<TLotes> getOpenedLotes() {
+        return tLotesRepository.findByEstadoLote("A");
+    }
+
+    public List<TLotes> getClosedLotes() {
+        return tLotesRepository.findByEstadoLote("C");
+    }
+
+    public List<TLotes> getOpenedLotesByDistribuidora(String codDistribuidora) {
+        return tLotesRepository.findByCodDistribuidoraAndEstado(codDistribuidora);
+    }
+
     // Leer un lote específico por ID compuesto
     public TLotes getLoteById(String codDistribuidora, Integer idLote) {
-        TLotesId loteId = new TLotesId(codDistribuidora, idLote);
-        return tLotesRepository.findById(loteId)
+        //TLotesId loteId = new TLotesId(codDistribuidora, idLote);
+        return tLotesRepository.findByIdLoteAndCodDistribuidora(idLote, codDistribuidora)
                 .orElseThrow(() -> new IllegalArgumentException("El lote no existe."));
     }
 
     // Actualizar un lote existente
     public TLotes updateLote(String codDistribuidora, Integer idLote, TLotes loteDetalles) {
-        TLotesId loteId = new TLotesId(codDistribuidora, idLote);
-        TLotes lote = tLotesRepository.findById(loteId)
+        //TLotesId loteId = new TLotesId(codDistribuidora, idLote);
+        TLotes lote = tLotesRepository.findByIdLoteAndCodDistribuidora(idLote, codDistribuidora)
                 .orElseThrow(() -> new IllegalArgumentException("El lote no existe."));
 
         // Actualizar los campos relevantes
         lote.setNomLote(loteDetalles.getNomLote());
         lote.setCodAlmacen(loteDetalles.getCodAlmacen());
         lote.setFecLote(loteDetalles.getFecLote());
+
+        return tLotesRepository.save(lote);
+    }
+
+    public TLotes cerrarLote(String codDistribuidora, Integer idLote) {
+        TLotes lote = tLotesRepository.findByIdLoteAndCodDistribuidora(idLote, codDistribuidora).orElseThrow(() -> new IllegalArgumentException("Lote no encontrado"));
+        lote.setEstadoLote("C");
 
         return tLotesRepository.save(lote);
     }
@@ -74,9 +96,9 @@ public class LotesService {
         }
 
         for (String idContador : idContadores) {
-            validarContadorRecepcionado(idContador);
+            validarContadorRecepcionado(idContador, distribuidora);
 
-            Optional<TProcesos> procesoOpt = tProcesosRepository.findByIdContador(idContador);
+            Optional<TProcesos> procesoOpt = tProcesosRepository.findByIdContadorAndCodDistribuidora(idContador, distribuidora);
             if (procesoOpt.isPresent()) {
                 TProcesos proceso = procesoOpt.get();
                 proceso.setIdLote(idLote);
@@ -87,8 +109,8 @@ public class LotesService {
         return "Lote " + idLote + " asignado a " + idContadores.size() + " contadores.";
     }
 
-    public void validarContadorRecepcionado(String idContador) {
-        Optional<TProcesos> procesoOpt = tProcesosRepository.findByIdContador(idContador);
+    public void validarContadorRecepcionado(String idContador, String codDistribuidora) {
+        Optional<TProcesos> procesoOpt = tProcesosRepository.findByIdContadorAndCodDistribuidora(idContador, codDistribuidora);
 
         if (procesoOpt.isEmpty()) {
             throw new IllegalArgumentException("El contador con ID " + idContador + " no existe en t_procesos.");
@@ -101,12 +123,8 @@ public class LotesService {
     }
 
     public List<TProcesos> obtenerContadoresPorLote(String codDistribuidora, Integer idLote) {
-        TLotesId loteId = new TLotesId(codDistribuidora, idLote);
-        TLotes lote = tLotesRepository.findById(loteId)
-                .orElseThrow(() -> new IllegalArgumentException("El lote no existe."));
-
         // Obtener todos los procesos que están asignados al lote
-        List<TProcesos> procesos = tProcesosRepository.findByIdLote(idLote);
+        List<TProcesos> procesos = tProcesosRepository.findByIdLoteAndCodDistribuidora(idLote, codDistribuidora);
 
         if (procesos.isEmpty()) {
             throw new IllegalArgumentException("No hay contadores asignados a este lote.");

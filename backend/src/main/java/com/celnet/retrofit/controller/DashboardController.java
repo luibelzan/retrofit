@@ -24,6 +24,7 @@ public class DashboardController {
         Double tasaRecuperacion = dashboardService.getTasaRecuperacion(codDistribuidora);
         Long contadoresPendientesRecibir = dashboardService.getPendientesRecibir(codDistribuidora);
         Double promedioDias = dashboardService.getPromedioDias(codDistribuidora);
+        Long totalContadores = dashboardService.getTotalContadores(codDistribuidora);
 
         return Map.of(
                 "totalRecepcionados", totalRecepcionados,
@@ -32,7 +33,8 @@ public class DashboardController {
                 "totalPendientesEnviar", totalPendientesEnviar,
                 "tasaRecuperacion", tasaRecuperacion,
                 "contadoresPendientesRecibir", contadoresPendientesRecibir,
-                "promedioDias", promedioDias
+                "promedioDias", promedioDias,
+                "totalContadores", totalContadores
         );
     }
 

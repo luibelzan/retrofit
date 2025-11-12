@@ -32,8 +32,8 @@
       <div class="form-group mb-3">
         <label for="idContador">ID Contador</label>
         <input type="text" id="idContador" class="form-control" v-model="idContador" required
-          @keyup.enter="agregarContador" pattern="^[a-zA-Z0-9]{18}$" maxlength="18"
-          title="Debe contener exactamente 18 caracteres alfanuméricos (letras y números, sin espacios ni caracteres especiales)" />
+          @keyup.enter="agregarContador" pattern="^[a-zA-Z0-9]{18, 20}$" maxlength="20"
+          title="Debe contener exactamente 18 o 20 caracteres alfanuméricos (letras y números, sin espacios ni caracteres especiales)" />
       </div>
 
       <button class="btn btn-primary" @click="agregarContador">
@@ -51,6 +51,12 @@
           <p><strong>{{ contador.idContador }}</strong></p>
           <p class="mx-2">/</p>
           <p><strong>{{ contador.codDiagnostico }}</strong></p>
+        </div>
+
+        <div>
+          <p>Codigo Almacen: <strong>{{ contador.codAlmacen }}</strong></p>
+          <p>Almacen: <strong>{{ contador.desAlmacen }}</strong></p>
+          <p>Fecha Recepcion: <strong>{{ new Date(contador.fecRecepcion2).toLocaleDateString('es-ES') }}</strong></p>
         </div>
 
         <!-- Selección de nuevo diagnóstico -->
@@ -83,7 +89,9 @@
 </template>
 
 <script>
-import Swal from "sweetalert2";
+import axios from 'axios';
+import { Modal } from 'bootstrap';
+import Swal from 'sweetalert2';
 
 export default {
   data() {
@@ -94,9 +102,46 @@ export default {
       codDiagnostico: "",
       idContador: "",
       contadores: [],
+      codAlmacen: "",
+      desAlmacen: "",
+      fecRecepcion: "",
+      fecRecepcion2: "",
     };
   },
   methods: {
+    playAlarm() {
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = ctx.createOscillator();
+            const gainNode = ctx.createGain();
+
+            oscillator.type = "square"; // tipo de onda
+            oscillator.frequency.setValueAtTime(800, ctx.currentTime); // frecuencia en Hz
+            gainNode.gain.setValueAtTime(0.2, ctx.currentTime); // volumen
+
+            oscillator.connect(gainNode);
+            gainNode.connect(ctx.destination);
+
+            oscillator.start();
+            setTimeout(() => oscillator.stop(), 1000); // dura 1 segundo
+    },
+    playSuccess() {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = ctx.createOscillator();
+        const gainNode = ctx.createGain();
+
+        oscillator.type = "sine"; // onda más suave
+        oscillator.frequency.setValueAtTime(600, ctx.currentTime); // tono inicial
+        oscillator.frequency.linearRampToValueAtTime(900, ctx.currentTime + 0.3); // sube el tono
+
+        gainNode.gain.setValueAtTime(0.2, ctx.currentTime); // volumen
+        gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3); // desvanecimiento suave
+
+        oscillator.connect(gainNode);
+        gainNode.connect(ctx.destination);
+
+        oscillator.start();
+        oscillator.stop(ctx.currentTime + 0.3); // duración corta (300ms)
+    },
     async fetchData() {
       try {
         const resDistribuidoras = await fetch("http://localhost:8080/api/achatarrado/distribuidoras");
@@ -109,23 +154,40 @@ export default {
       }
     },
     async agregarContador() {
-      if (this.idContador && this.codDistribuidora && this.codDiagnostico) {
+      const url = `http://localhost:8080/api/achatarrado/validar/${this.idContador}?codDistribuidora=${this.codDistribuidora}`;
+      const response = await fetch(url);
+      const result = await response.json();
+
+      if(!response.ok) {
+        this.playAlarm();
+        Swal.fire({
+          icon: "warning",
+          title: "Error al validar contador",
+          text: result.mensaje,
+        });
+        //throw new Error(result.mensaje || "Error desconocido");
+      } else {
         try {
+          // Eliminar sufijo 'ME' si tiene longitud 20 y termina en 'ME'
+          let idContadorProcesado = this.idContador;
+          if (idContadorProcesado.length === 20 && idContadorProcesado.endsWith("ME")) {
+            idContadorProcesado = idContadorProcesado.slice(0, -2);
+          }
+
           this.contadores.push({
-            idContador: this.idContador,
+            idContador: idContadorProcesado,
             codDistribuidora: this.codDistribuidora,
             codDiagnostico: this.codDiagnostico,
+            codAlmacen: result.codAlmacen,
+            desAlmacen: result.desAlmacen,
+            fecRecepcion: result.fecRecepcion,
+            fecRecepcion2: result.fecRecepcion2,
           });
           this.idContador = "";
-
-          Swal.fire({
-            icon: "success",
-            title: "Contador Añadido",
-            text: "El contador se agregó correctamente.",
-            timer: 1000,
-            showConfirmButton: false,
-          });
+          this.playSuccess();
+        
         } catch (error) {
+          this.playAlarm();
           Swal.fire({
             icon: "error",
             title: "Error",
@@ -133,6 +195,7 @@ export default {
           });
         }
       }
+
     },
     eliminarContador(index) {
       this.contadores.splice(index, 1);
@@ -148,8 +211,9 @@ export default {
             ids: this.contadores.map((c) => ({
               idContador: c.idContador,
               codDistribuidora: c.codDistribuidora,
+              codDiagnostico: c.codDiagnostico,
             })),
-            codDiagnostico: this.codDiagnostico,
+            tipDiagnostico: "RP"
           }),
         });
 
