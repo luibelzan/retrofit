@@ -47,8 +47,12 @@ public class EstadisticasController {
         @RequestBody Map<String, String> request) {
 
             String idContadorSust = request.get("idContadorSust");
-
-            estadisticasService.actualizarContadorSust(idContador, codDistribuidora, idContadorSust);
+            Integer idLote = null;
+            if(request.get("idLote") != null) {
+                idLote = Integer.valueOf(request.get("idLote"));
+            }
+            
+            estadisticasService.actualizarContadorSust(idContador, codDistribuidora, idContadorSust, idLote);
             return ResponseEntity.ok().build();
     }
 

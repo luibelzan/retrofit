@@ -61,6 +61,10 @@
                 <th>
                   Contador Sust
                 </th>
+                <th>
+                  Id Lote
+                </th>
+                
               </tr>
             </thead>
             <tbody>
@@ -77,6 +81,10 @@
                 <!-- Nuevo campo editable -->
                 <td>
                   <input type="text" v-model="equipo.idContadorSust" class="form-control" />
+                </td>
+
+                <td>
+                  <input type="number" v-model="equipo.idLote" class="form-control" />
                 </td>
 
                 <td>
@@ -206,7 +214,9 @@ export default {
       try {
         await axios.put(
           `http://localhost:8080/api/estadisticas/equipos-garantia/${equipo.idContador}/${equipo.codDistribuidora}/sustituto`,
-          { idContadorSust: equipo.idContadorSust }
+          { idContadorSust: equipo.idContadorSust,
+            idLote: equipo.idLote,
+           }
         );
 
         Swal.fire({

@@ -44,7 +44,7 @@ public class EstadisticasService {
     }
 
     @Transactional
-    public TProcesos actualizarContadorSust(String idContador, String codDistribuidora, String idContadorSust) {
+    public TProcesos actualizarContadorSust(String idContador, String codDistribuidora, String idContadorSust, Integer idLote) {
         // 1. Validar que el contador sustituto sea correcto
         String codigoBarrasFixed;
         if (idContadorSust != null && idContadorSust.endsWith("ME") && idContadorSust.length() == 20) {
@@ -79,6 +79,10 @@ public class EstadisticasService {
         // 3. Actualizar el sustituto
         TProcesos proceso = optProceso.get();
         proceso.setIdContadorSust(codigoBarrasFixed);
+        
+        if(idLote != null) {
+            proceso.setIdLote(idLote);
+        }
 
         return procesosRepository.save(proceso);
     }
