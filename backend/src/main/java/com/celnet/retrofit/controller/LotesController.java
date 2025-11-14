@@ -183,7 +183,7 @@ public class LotesController {
 
             // Generar el archivo Excel con los códigos de barras
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-            barcodeService.generarExcelConCodigoBarras(contadores, outStream);
+            barcodeService.generarExcelConCodigoBarras(contadores, outStream, desAlmacen);
 
             // Establecer los encabezados para la descarga del archivo
             HttpHeaders headers = new HttpHeaders();

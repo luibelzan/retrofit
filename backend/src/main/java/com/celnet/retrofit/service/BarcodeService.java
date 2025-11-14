@@ -6,6 +6,7 @@ import com.google.zxing.common.BitMatrix;
 import com.google.zxing.oned.Code128Writer;
 import com.celnet.retrofit.model.TProcesos;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +17,7 @@ import java.util.List;
 @Service
 public class BarcodeService {
 
-    public void generarExcelConCodigoBarras(List<TProcesos> contadores, OutputStream outputStream) throws Exception {
+    public void generarExcelConCodigoBarras(List<TProcesos> contadores, OutputStream outputStream, String desAlmacen) throws Exception {
         // Crea el libro y hoja de cálculo
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("Códigos de Barras");
@@ -26,8 +27,22 @@ public class BarcodeService {
         cellStyle.setAlignment(HorizontalAlignment.CENTER);
         cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
 
+        // =============================
+        // 🔹 INSERTAR PRIMERA FILA CON NOMBRE DEL LOTE
+        // =============================
+        Row tituloRow = sheet.createRow(0);
+        tituloRow.setHeightInPoints(25);
+
+        Cell tituloCell = tituloRow.createCell(0);
+        tituloCell.setCellValue("Lote: " + contadores.get(0).getIdLote() + " Almacen: " + desAlmacen);  // o lo que quieras
+        tituloCell.setCellStyle(cellStyle);
+
+        // Combinar columnas A y B para el título
+        sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 1));
+        // =============================
+
         // Crea el encabezado
-        Row headerRow = sheet.createRow(0);
+        Row headerRow = sheet.createRow(1);
         headerRow.createCell(0).setCellValue("Número de Serie");
         headerRow.createCell(1).setCellValue("Código de Barras");
 
@@ -36,7 +51,7 @@ public class BarcodeService {
         headerRow.getCell(1).setCellStyle(cellStyle);
 
         // Procesa cada objeto TProcesos en la lista
-        int rowIndex = 1; // Comienza en la segunda fila (la primera es el encabezado)
+        int rowIndex = 2; // Comienza en la segunda fila (la primera es el encabezado)
         for (TProcesos contador : contadores) {
             Row row = sheet.createRow(rowIndex);
             row.createCell(0).setCellValue(contador.getIdContador());
