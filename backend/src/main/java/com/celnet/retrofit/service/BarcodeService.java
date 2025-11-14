@@ -53,10 +53,17 @@ public class BarcodeService {
         // Procesa cada objeto TProcesos en la lista
         int rowIndex = 2; // Comienza en la segunda fila (la primera es el encabezado)
         for (TProcesos contador : contadores) {
-            Row row = sheet.createRow(rowIndex);
-            row.createCell(0).setCellValue(contador.getIdContador());
-            row.getCell(0).setCellStyle(cellStyle);
-
+            Row row;
+            if(contador.getIdContadorSust() != null || contador.getIdContadorSust() == "") {
+                row = sheet.createRow(rowIndex);
+                row.createCell(0).setCellValue(contador.getIdContadorSust());
+                row.getCell(0).setCellStyle(cellStyle);
+            } else {
+                row = sheet.createRow(rowIndex);
+                row.createCell(0).setCellValue(contador.getIdContador());
+                row.getCell(0).setCellStyle(cellStyle);
+            }
+            
             // Generar código de barras usando ZXing
             byte[] barcodeImage = generarCodigoDeBarras(contador.getIdContador());
 
