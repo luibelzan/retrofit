@@ -18,11 +18,26 @@
             <table class="table table-bordered">
                 <thead>
                     <tr>
-                        <th>ID Lote</th>
-                        <th>Código Distribuidora</th>
-                        <th>Nombre del Lote</th>
-                        <th>Código Almacén</th>
-                        <th>Fecha</th>
+                        <th>ID Lote
+                            <input type="text" class="form-control mt-1" v-model="filters.idLote"
+                                placeholder="Filtrar...">
+                        </th>
+                        <th>Código Distribuidora
+                            <input type="text" class="form-control mt-1" v-model="filters.codDistribuidora"
+                                placeholder="Filtrar...">
+                        </th>
+                        <th>Nombre del Lote
+                            <input type="text" class="form-control mt-1" v-model="filters.nomLote"
+                                placeholder="Filtrar...">
+                        </th>
+                        <th>Código Almacén
+                            <input type="text" class="form-control mt-1" v-model="filters.codAlmacen"
+                                placeholder="Filtrar...">
+                        </th>
+                        <th>Fecha
+                            <input type="text" class="form-control mt-1" v-model="filters.fecLote"
+                                placeholder="Filtrar...">
+                        </th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -202,6 +217,13 @@ export default {
                 codAlmacen: "",
                 fecLote: "",
             },
+            filters: {
+                idLote: "",
+                codDistribuidora: "",
+                nomLote: "",
+                codAlmacen: "",
+                fecLote: "",
+            },
             modalCrearVisible: false,
             modalEditarVisible: false,
             modalVerVisible: false,
@@ -211,8 +233,22 @@ export default {
         paginatedLotes() {
             const start = (this.currentPage - 1) * this.pageSize;
             const end = start + this.pageSize;
-            return this.lotes.slice(start, end);
+            return this.filteredLotes.slice(start, end);
         },
+
+        filteredLotes() {
+            return this.lotes.filter(lote => {
+                return Object.keys(this.filters).every(key => {
+                    const filterValue = this.filters[key]?.toLowerCase().trim();
+                    const processValue = lote[key]?.toString().toLowerCase() ?? "";
+
+                    if (!filterValue) return true; // si no hay filtro, se acepta
+
+                    return processValue.includes(filterValue); // ← ESTA ES LA CORRECTA
+                });
+            });
+        },
+
     },
     mounted() {
         this.fetchLotes();
@@ -233,7 +269,7 @@ export default {
             .get(url)
             .then((response) => {
                 this.lotes = response.data;
-                this.totalPages = Math.ceil(this.lotes.length / this.pageSize);
+                this.totalPages = Math.ceil(this.filteredLotes.length / this.pageSize);
                 if (this.currentPage > this.totalPages) {
                     this.currentPage = this.totalPages || 1;
                 }
