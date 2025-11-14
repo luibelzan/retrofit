@@ -2,6 +2,13 @@
   <div class="container">
     <h2>Asignar Lote a Contadores</h2>
 
+    <!-- Contador de registros -->
+    <div v-if="contadores.length > 0" class="contador-recepcionado text-center mt-4">
+      <h3 class="contador-numero">Contadores Asignados: {{ contadores.length }}</h3>
+      <p class="ultimo-codigo"><strong>Último Contador Recepcionado:</strong> {{ contadores[contadores.length -
+        1] }}</p>
+    </div>
+
     <form @submit.prevent="asignarLote">
 
       <div class="mb-3">
