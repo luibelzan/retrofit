@@ -119,6 +119,8 @@ public class LotesService {
         TProcesos proceso = procesoOpt.get();
         if (proceso.getCodFabricante() == null || proceso.getCodModelo() == null || proceso.getAnoFabricacion() == null) {
             throw new IllegalArgumentException("El contador con ID " + idContador + " no ha sido recepcionado. Verifique antes de asignarlo a un lote.");
+        } else if(proceso.getTipDiagnostico2() != "RP" && proceso.getCodDiagnostico2() != 20) {
+            throw new IllegalArgumentException("El contador con ID " + idContador + " no esta en estado RP-20");
         }
     }
 
