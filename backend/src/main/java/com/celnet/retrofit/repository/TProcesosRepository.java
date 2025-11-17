@@ -2,7 +2,10 @@ package com.celnet.retrofit.repository;
 
 import com.celnet.retrofit.dto.EquipoGarantiaPendienteSustitucion;
 import com.celnet.retrofit.dto.ReporteRecuperado;
+import com.celnet.retrofit.dto.ReporteRecuperadoIberdrola;
+import com.celnet.retrofit.dto.ReporteSustituido;
 import com.celnet.retrofit.dto.ReporteAchatarrado;
+import com.celnet.retrofit.dto.ReporteAchatarradoIberdrola;
 import com.celnet.retrofit.model.TProcesos;
 import com.celnet.retrofit.model.id.TProcesosId;
 import jakarta.transaction.Transactional;
@@ -121,7 +124,17 @@ public interface TProcesosRepository extends JpaRepository<TProcesos, TProcesosI
           AND p.tip_diagnostico2 = 'RP'
           AND p.fec_proceso2 >= :fechaInicio
         """, nativeQuery = true)
-        List<ReporteRecuperado> getReporteRecuperados(
+        List<ReporteRecuperadoIberdrola> getReporteRecuperadosIberdrola(
+                        @Param("codDistribuidora") String codDistribuidora,
+                        @Param("fechaInicio") Date fechaInicio);
+
+        @Query("SELECT p FROM TProcesos p " +
+       "WHERE p.codDistribuidora = :codDistribuidora " +
+       "AND p.tipDiagnostico2 = 'RP' " +
+       "AND p.codDiagnostico2 = 20 " +
+       "AND p.fecProceso2 >= :fechaInicio " +
+       "AND p.facturado IS NULL")
+        List<TProcesos> getReporteRecuperados(
                         @Param("codDistribuidora") String codDistribuidora,
                         @Param("fechaInicio") Date fechaInicio);
 
@@ -138,7 +151,28 @@ public interface TProcesosRepository extends JpaRepository<TProcesos, TProcesosI
               t_proceso.cod_diagnostico2 = t_diagnostico.cod_diagnostico  and
             t_proceso.fec_proceso2 >= :fechaInicio
         """, nativeQuery = true)
-        List<ReporteAchatarrado> getReporteAchatarrados(
+        List<ReporteAchatarradoIberdrola> getReporteAchatarradosIberdrola(
+                        @Param("codDistribuidora") String codDistribuidora,
+                        @Param("fechaInicio") Date fechaInicio);
+
+        @Query("SELECT p FROM TProcesos p " +
+       "WHERE p.codDistribuidora = :codDistribuidora " +
+       "AND p.tipDiagnostico2 = 'CH' " +
+       "AND p.codDiagnostico2 = 3 " +
+       "AND p.fecProceso2 >= :fechaInicio " +
+       "AND p.facturado IS NULL")
+        List<TProcesos> getReporteAchatarrados(
+                        @Param("codDistribuidora") String codDistribuidora,
+                        @Param("fechaInicio") Date fechaInicio);
+
+       
+        @Query("SELECT p FROM TProcesos p " +
+       "WHERE p.codDistribuidora = :codDistribuidora " +
+       "AND p.tipDiagnostico2 = 'CH' " +
+       "AND p.idContadorSust IS NOT NULL " +
+       "AND p.fecProceso2 >= :fechaInicio " +
+       "AND p.facturado IS NULL")
+        List<TProcesos> getReporteSustituidos(
                         @Param("codDistribuidora") String codDistribuidora,
                         @Param("fechaInicio") Date fechaInicio);
 

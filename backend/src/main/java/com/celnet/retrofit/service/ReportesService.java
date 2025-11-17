@@ -25,9 +25,11 @@ import com.celnet.retrofit.repository.TSustitucionesRepository;
 import com.celnet.retrofit.repository.ReportesRepository;
 import com.celnet.retrofit.repository.TDistribuidorasRepository;
 import com.celnet.retrofit.dto.ReporteRecuperado;
+import com.celnet.retrofit.dto.ReporteRecuperadoIberdrola;
+import com.celnet.retrofit.dto.ReporteSustituido;
 import com.celnet.retrofit.dto.ContadoresPorEnviar;
 import com.celnet.retrofit.dto.ReporteAchatarrado;
-
+import com.celnet.retrofit.dto.ReporteAchatarradoIberdrola;
 
 @Service
 public class ReportesService {
@@ -332,13 +334,13 @@ public class ReportesService {
                 row.createCell(3).setCellValue(p.getCodModelo());
                 row.createCell(4).setCellValue(p.getAnoFabricacion());
                 Cell cell5 = row.createCell(5);
-                if(p.getFecRecepcion() != null) {
+                if (p.getFecRecepcion() != null) {
                     cell5.setCellValue(p.getFecRecepcion());
                     cell5.setCellStyle(dateCellStyle);
                 }
                 row.createCell(6).setCellValue(p.getCodAlmacen());
                 Cell cell7 = row.createCell(7);
-                if(p.getFecAveria() != null) {
+                if (p.getFecAveria() != null) {
                     cell7.setCellValue(p.getFecAveria());
                     cell7.setCellStyle(dateCellStyle);
                 }
@@ -346,7 +348,7 @@ public class ReportesService {
                 row.createCell(9).setCellValue(p.getDesObservaciones());
                 row.createCell(10).setCellValue(p.getTipDiagnostico());
                 Cell cell11 = row.createCell(11);
-                if(p.getFecProceso() != null) {
+                if (p.getFecProceso() != null) {
                     cell11.setCellValue(p.getFecProceso());
                     cell11.setCellStyle(dateCellStyle);
                 }
@@ -366,58 +368,116 @@ public class ReportesService {
 
         StringBuilder sb = new StringBuilder();
         for (TProcesos p : procesos) {
-            sb.append("").append(p.getIdContador()).append("\n"); ;
+            sb.append("").append(p.getIdContador()).append("\n");
+            ;
         }
 
         return sb.toString().getBytes(StandardCharsets.UTF_8);
     }
 
     public byte[] generarReporteRecuperados(String codDistribuidora, Date fechaInicio) {
-        List<ReporteRecuperado> procesos =
-                procesosRepository.getReporteRecuperados(codDistribuidora, fechaInicio);
 
-        StringBuilder sb = new StringBuilder();
+        if (codDistribuidora.equals("777")) {
+            List<ReporteRecuperadoIberdrola> procesos = procesosRepository.getReporteRecuperadosIberdrola(codDistribuidora,
+                    fechaInicio);
 
-        for (ReporteRecuperado p : procesos) {
-            sb.append(p.getIdContador()).append(";")
-            .append(p.getTipDiagnostico2()).append(";")
-            .append(p.getValor1()).append(";")
-            .append(p.getValor2()).append(";")
-            .append(p.getDescripcion()).append(";")
-            .append(p.getFechaFormateada())
-            .append("\n");
+            StringBuilder sb = new StringBuilder();
+
+            for (ReporteRecuperadoIberdrola p : procesos) {
+                sb.append(p.getIdContador()).append(";")
+                        .append(p.getTipDiagnostico2()).append(";")
+                        .append(p.getValor1()).append(";")
+                        .append(p.getValor2()).append(";")
+                        .append(p.getDescripcion()).append(";")
+                        .append(p.getFechaFormateada())
+                        .append("\n");
+            }
+
+            return sb.toString().getBytes(StandardCharsets.UTF_8);
+        } else {
+            List<TProcesos> procesos = procesosRepository.getReporteRecuperados(codDistribuidora,
+                    fechaInicio);
+
+            StringBuilder sb = new StringBuilder();
+
+            for (TProcesos p : procesos) {
+                sb.append(p.getIdContador()).append(";")
+                        .append(p.getTipDiagnostico2()).append(";")
+                        .append("01").append(";")
+                        .append("Test Funcionales OK").append(';')
+                        .append("Test Funcionales OK")
+                        .append("\n");
+            }
+
+            return sb.toString().getBytes(StandardCharsets.UTF_8);
         }
 
-        return sb.toString().getBytes(StandardCharsets.UTF_8);
     }
-
 
     public byte[] generarReporteAchatarrados(String codDistribuidora, Date fechaInicio) {
-        List<ReporteAchatarrado> procesos =
-                procesosRepository.getReporteAchatarrados(codDistribuidora, fechaInicio);
+
+        if (codDistribuidora.equals("777")) {
+            List<ReporteAchatarradoIberdrola> procesos = procesosRepository.getReporteAchatarradosIberdrola(codDistribuidora,
+                    fechaInicio);
+
+            StringBuilder sb = new StringBuilder();
+
+            // Recorremos y agregamos cada fila con formato requerido
+            for (ReporteAchatarradoIberdrola p : procesos) {
+                sb.append(p.getIdContador()).append(";")
+                        .append(p.getTipDiagnostico2()).append(";")
+                        .append(p.getN()).append(";")
+                        .append(p.getCodDiagnosticoIb()).append(";")
+                        .append(p.getDesDiagnosticoIb()).append(";")
+                        .append(p.getFechaFormateada())
+                        .append("\n");
+            }
+
+            return sb.toString().getBytes(StandardCharsets.UTF_8);
+        } else {
+            List<TProcesos> procesos = procesosRepository.getReporteAchatarrados(codDistribuidora,
+                    fechaInicio);
+
+            StringBuilder sb = new StringBuilder();
+
+            // Recorremos y agregamos cada fila con formato requerido
+            for (TProcesos p : procesos) {
+                sb.append(p.getIdContador()).append(";")
+                        .append(p.getTipDiagnostico2()).append(";")
+                        .append("02").append(";")
+                        .append(p.getDesAveria()).append(";")
+                        .append("Contador sin Garantia").append(";")
+                        .append("01")
+                        .append("\n");
+            }
+
+            return sb.toString().getBytes(StandardCharsets.UTF_8);
+        }
+    }
+
+    public byte[] generarReporteSustituidos(String codDistribuidora, Date fechaInicio) {
+        List<TProcesos> procesos = procesosRepository.getReporteSustituidos(codDistribuidora, fechaInicio);
 
         StringBuilder sb = new StringBuilder();
 
-        // Recorremos y agregamos cada fila con formato requerido
-        for (ReporteAchatarrado p : procesos) {
+        for(TProcesos p: procesos) {
             sb.append(p.getIdContador()).append(";")
-            .append(p.getTipDiagnostico2()).append(";")
-            .append(p.getN()).append(";")
-            .append(p.getCodDiagnosticoIb()).append(";")
-            .append(p.getDesDiagnosticoIb()).append(";")
-            .append(p.getFechaFormateada())
-            .append("\n");
+                .append("CH").append(";")
+                .append("01").append(";")
+                .append(p.getDesAveria()).append(";")
+                .append("Contador en Garantia").append(";")
+                .append(p.getIdContadorSust()).append(";")
+                .append("02")
+                .append("\n");
         }
-
         return sb.toString().getBytes(StandardCharsets.UTF_8);
     }
-
 
     public String getNomDistribuidora(String codDistribuidora) {
         String nombre = distribuidorasRepository.findNomDistribuidoraByCodDistribuidora(codDistribuidora);
 
         return nombre;
-    } 
+    }
 
     public List<ContadoresPorEnviar> getContadoresPorEnviar(String codDistribuidora, Date fecha) {
         return reportesRepository.findContadoresPorEnviar(codDistribuidora, fecha);

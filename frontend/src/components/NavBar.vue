@@ -104,6 +104,9 @@
                 <a class="dropdown-item" @click="navigate('/reportes-achatarrados')">Reporte de Equipos Achatarrados</a>
               </li>
               <li>
+                <a class="dropdown-item" @click="navigate('/reportes-sustituidos')">Reporte de Equipos Sustituidos</a>
+              </li>
+              <li>
                 <a class="dropdown-item" @click="navigate('/reportes-contadores-por-enviar')">Reporte de Contadores por Enviar</a>
               </li>
             </ul>

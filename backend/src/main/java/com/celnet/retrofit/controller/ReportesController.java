@@ -114,5 +114,26 @@ public class ReportesController {
         @RequestParam @DateTimeFormat( iso = DateTimeFormat.ISO.DATE) Date fecha) {
         return ResponseEntity.ok(reportesService.getContadoresPorEnviar(codDistribuidora, fecha));
     }
+
+    @GetMapping("/sustituidos")
+    public ResponseEntity<byte[]> generarReporteSustituidos(
+        @RequestParam String codDistribuidora,
+        @RequestParam @DateTimeFormat( iso = DateTimeFormat.ISO.DATE) Date fechaInicio) {
+
+        byte[] contenido = reportesService.generarReporteSustituidos(codDistribuidora, fechaInicio);
+
+        String distribuidora = reportesService.getNomDistribuidora(codDistribuidora);
+
+        Date hoy = new Date();
+        String fechaFormateada = new java.text.SimpleDateFormat("yyyy_MM_dd").format(hoy);
+
+        String nombreArchivo = distribuidora + "_Sustituidos_" + fechaFormateada + ".txt";
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + nombreArchivo + "\"")
+                .header(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, HttpHeaders.CONTENT_DISPOSITION)
+                .contentType(MediaType.TEXT_PLAIN)
+                .body(contenido);
+    }
     
 }

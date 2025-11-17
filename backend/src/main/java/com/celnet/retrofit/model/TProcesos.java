@@ -77,6 +77,9 @@ public class TProcesos {
     @Column(name = "id_contador_sust", nullable = true)
     private String idContadorSust;
 
+    @Column(name = "facturado", nullable = true)
+    private String facturado;
+
     // Getters y Setters
 
     public String getCodDistribuidora() {
@@ -237,5 +240,13 @@ public class TProcesos {
 
     public void setIdContadorSust(String idContadorSust) {
         this.idContadorSust = idContadorSust;   
+    }
+
+    public String getFacturado() {
+        return facturado;
+    }
+
+    public void setFacturado(String facturado) {
+        this.facturado = facturado;
     }
 }

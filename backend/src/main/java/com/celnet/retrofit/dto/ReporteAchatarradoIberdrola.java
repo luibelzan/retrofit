@@ -1,6 +1,8 @@
 package com.celnet.retrofit.dto;
 
-public interface ReporteAchatarrado {
+
+public interface ReporteAchatarradoIberdrola {
+    
     String getIdContador();
     
     String getTipDiagnostico2();
@@ -13,3 +15,4 @@ public interface ReporteAchatarrado {
     
     String getFechaFormateada();
 }
+
