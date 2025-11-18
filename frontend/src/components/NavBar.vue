@@ -26,6 +26,9 @@
               <li>
                 <a class="dropdown-item" @click="navigate('/recepcion')">Recepción Contador</a>
               </li>
+              <li>
+                <a class="dropdown-item" @click="navigate('/backup')">Respaldar Base de Datos</a>
+              </li>
             </ul>
           </li>
 

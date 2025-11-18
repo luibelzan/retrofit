@@ -445,7 +445,7 @@ public class ReportesService {
                 sb.append(p.getIdContador()).append(";")
                         .append(p.getTipDiagnostico2()).append(";")
                         .append("02").append(";")
-                        .append(p.getDesAveria()).append(";")
+                        .append("Daño fisico").append(";")
                         .append("Contador sin Garantia").append(";")
                         .append("01")
                         .append("\n");

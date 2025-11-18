@@ -24,6 +24,7 @@ import ReportesRecuperados from '@/views/ReportesRecuperados.vue'
 import ReportesAchatarrados from '@/views/ReportesAchatarrados.vue'
 import ReportesContadoresPorEnviar from '@/views/ReportesContadoresPorEnviar.vue'
 import ReportesSustituidos from '@/views/ReportesSustituidos.vue'
+import Backup from '@/views/Backup.vue'
 
 const routes = [
   {
@@ -150,6 +151,11 @@ const routes = [
     path: '/reportes-contadores-por-enviar',
     name: 'ReportesContadoresPorEnviar',
     component: ReportesContadoresPorEnviar,
+  },
+  {
+    path: '/backup',
+    name: 'Backup',
+    component: Backup,
   },
 ]
 
